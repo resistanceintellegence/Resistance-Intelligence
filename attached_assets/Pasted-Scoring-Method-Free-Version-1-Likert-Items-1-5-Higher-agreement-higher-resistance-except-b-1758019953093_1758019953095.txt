@@ -1,0 +1,52 @@
+Scoring Method (Free Version)
+1.	Likert Items (1–5): Higher agreement = higher resistance, except balancing items (reverse scored).
+2.	Forced-Choice Items: Score A or B based on resistance mapping.
+3.	Total: Sum per archetype (3 items each).
+4.	Result: Identify highest archetype → show short free report.
+Free Leadership Assessment – Resistance Scoring
+Step 1: Score Likert Items (1–5 scale)
+•	For each archetype question, assign points:
+o	Strongly Disagree = 1
+o	Disagree = 2
+o	Neutral = 3
+o	Agree = 4
+o	Strongly Agree = 5
+👉 Balancing items (Q8, Q16, Q24) are reverse scored (Strongly Disagree = 5 → Strongly Agree = 1).
+________________________________________
+Step 2: Score Forced-Choice Items
+•	Q4 (Decisive Change Agent):
+o	A = 5 (high resistance)
+o	B = 1 (low resistance)
+•	Q12 (Empowering Delegator):
+o	A = 5 (resistance)
+o	B = 1 (low resistance)
+•	Q20 (Outcome-Driven Achiever / Strategic Architect):
+o	A = 5 (short-term bias, resistance)
+o	B = 1 (long-term focus, balanced)
+________________________________________
+Step 3: Total Per Archetype
+Each archetype has 3 questions. Max = 15 points, Min = 3 points.
+•	Strategic Architect: Q1, Q15, Q20 (B = low resistance, A = high)
+•	Vision-Driven Innovator: Q2, Q7, Q8 (reverse)
+•	Decisive Change Agent: Q3, Q4, Q18
+•	Collaborative Harmonizer: Q5, Q6, Q23
+•	Empowering Delegator: Q9, Q10, Q12
+•	People-Centric Coach: Q11, Q21, Q24 (reverse)
+•	Risk-Aware Stabilizer: Q13, Q14, Q16 (reverse)
+•	Outcome-Driven Achiever: Q17, Q19, Q20
+________________________________________
+**Step 4: Normalize to Resistance %
+Convert raw scores (3–15) into a 0–100 resistance index:
+Resistance%=(Raw−3)12×100Resistance \% = \frac{(Raw - 3)}{12} \times 100Resistance%=12(Raw−3)×100 
+•	Raw 3 = 0%
+•	Raw 15 = 100%
+________________________________________
+Step 5: Identify Dominant Archetype
+•	The archetype with the highest Resistance % = your primary resistance pattern.
+•	If tied: Choose the archetype with more forced-choice confirmation (Q4, Q12, Q20).
+________________________________________
+Step 6: Interpret Results
+Use 3 bands for Free version:
+•	Low Resistance: 0–34%
+•	Moderate Resistance: 35–54%
+•	High Resistance: 55–100%

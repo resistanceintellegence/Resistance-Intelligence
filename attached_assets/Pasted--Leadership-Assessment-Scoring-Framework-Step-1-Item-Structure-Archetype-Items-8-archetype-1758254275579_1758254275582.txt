@@ -1,0 +1,67 @@
+📊 Leadership Assessment – Scoring Framework
+Step 1. Item Structure
+•	Archetype Items: 8 archetypes × 8 items = 64
+o	2 direct (Likert)
+o	2 oblique (Likert)
+o	2 scenario (multi-choice, mapped to archetypes)
+o	2 forced-choice (ipsative, trade-offs)
+•	Balancing Items: 16 total (reverse-coded, across archetypes)
+•	Total: 80 items
+________________________________________
+Step 2. Response Scales
+Likert Items (Direct + Oblique)
+•	Strongly Disagree = 1
+•	Disagree = 2
+•	Neutral = 3
+•	Agree = 4
+•	Strongly Agree = 5
+Reverse-coded items (from balancing set): flip the values (1→5, 2→4, 3 stays, 4→2, 5→1).
+________________________________________
+Scenario Items
+•	Archetype-linked option = 5
+•	Neutral/middle option = 3
+•	Opposite option = 1
+________________________________________
+Forced-Choice Items (Ipsative)
+•	Each block presents 4 archetype-linked statements.
+•	“Most like me” = +2 to that archetype
+•	“Least like me” = −1 to that archetype
+•	Others = 0
+This ensures trade-offs between archetypes.
+________________________________________
+Step 3. Raw Archetype Score
+Each archetype includes:
+•	2 direct + 2 oblique (max 20)
+•	2 scenario (max 10)
+•	2 forced-choice (range −2 to +4)
+Raw Range per Archetype: ≈ 8 to 34
+________________________________________
+Step 4. Normalize to 0–100 Scale
+Formula:
+Archetype %=Raw Score−MinMax−Min×100\text{Archetype \%} = \frac{\text{Raw Score} - \text{Min}}{\text{Max} - \text{Min}} \times 100 
+•	Min = 8
+•	Max = 34
+Example: Raw = 21 → ((21 − 8) / (34 − 8)) × 100 = 50%
+________________________________________
+Step 5. Resistance Levels
+•	Low = 0–34%
+•	Moderate = 35–50%
+•	High = 50–100%
+________________________________________
+Step 6. Balancing Index
+•	Average the 16 reverse-coded balancing items.
+•	Normalize to 0–100.
+Adjustment:
+•	If ≥55→ subtract 3 points from each archetype %
+•	If 35–54 → no adjustment
+•	If ≤34→ add 2 points to each archetype %
+•	Clamp final results between 0 and 100
+________________________________________
+Step 7. Reporting
+•	Rank all 8 archetypes by % score
+•	Show Top 3 archetypes in results snapshot
+•	Provide full detailed report for the #1 archetype
+•	If results show:
+o	All Low Resistance → scenario report: “low resistance profile”
+o	All Medium → scenario report: “consistent but moderate friction”
+o	Mix of Medium + Low → scenario report: “balanced but with small blind spots”

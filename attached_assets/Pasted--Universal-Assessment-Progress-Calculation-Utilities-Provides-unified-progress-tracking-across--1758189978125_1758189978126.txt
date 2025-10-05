@@ -1,0 +1,79 @@
+// Universal Assessment Progress Calculation Utilities
+// Provides unified progress tracking across both assessment phases
+
+export interface ProgressData {
+  progressPercentage: number;
+  completedQuestions: number;
+  totalQuestions: number;
+  currentPhaseQuestions: number;
+  currentPhaseIndex: number;
+}
+
+export interface AssessmentPhaseConfig {
+  phase1Questions: number;
+  phase2Questions: number;
+  currentPhase: 1 | 2;
+  currentQuestionIndex: number;
+}
+
+/**
+ * Calculate unified progress across both assessment phases
+ * Shows continuous percentage from 0% to 100% instead of resetting between phases
+ */
+export function calculateUnifiedAssessmentProgress(config: AssessmentPhaseConfig): ProgressData {
+  const { phase1Questions, phase2Questions, currentPhase, currentQuestionIndex } = config;
+  const totalQuestions = phase1Questions + phase2Questions;
+  
+  let completedQuestions = 0;
+  
+  if (currentPhase === 1) {
+    completedQuestions = currentQuestionIndex;
+  } else if (currentPhase === 2) {
+    completedQuestions = phase1Questions + currentQuestionIndex;
+  }
+  
+  const progressPercentage = Math.round((completedQuestions / totalQuestions) * 100);
+  
+  return {
+    progressPercentage,
+    completedQuestions,
+    totalQuestions,
+    currentPhaseQuestions: currentPhase === 1 ? phase1Questions : phase2Questions,
+    currentPhaseIndex: currentQuestionIndex
+  };
+}
+
+
+
+// Assessment context question counts for accurate progress calculation
+export const ASSESSMENT_QUESTION_COUNTS = {
+  relationships: {
+    seeking: { phase1: 24, phase2: 41 }, // 21 universal + 3 context + 41 phase2
+    romantic: { phase1: 24, phase2: 41 },
+    marriage: { phase1: 24, phase2: 41 },
+    friendship: { phase1: 24, phase2: 41 },
+    family: { phase1: 24, phase2: 41 },
+    parent_child: { phase1: 24, phase2: 41 }
+  },
+  finance: {
+    personal: { phase1: 15, phase2: 20 },
+    career: { phase1: 15, phase2: 20 },
+    business: { phase1: 15, phase2: 20 },
+    investment: { phase1: 15, phase2: 20 }
+  },
+  health: {
+    physical: { phase1: 15, phase2: 20 },
+    mental: { phase1: 15, phase2: 20 },
+    nutrition: { phase1: 15, phase2: 20 },
+    lifestyle: { phase1: 15, phase2: 20 }
+  },
+  innerPeace: {
+    stress: { phase1: 15, phase2: 20 },
+    anxiety: { phase1: 15, phase2: 20 },
+    purpose: { phase1: 15, phase2: 20 },
+    spiritual: { phase1: 15, phase2: 20 }
+  },
+  successFormula: {
+    overall: { phase1: 20, phase2: 4 } // 5 per pillar * 4 pillars + 4 pattern questions
+  }
+} as const;

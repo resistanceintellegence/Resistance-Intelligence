@@ -1,0 +1,2581 @@
+import { useState, useEffect, useRef } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import SEOHead from "@/components/seo-head";
+import { 
+  Heart, 
+  DollarSign, 
+  Activity, 
+  Brain, 
+  Target, 
+  ArrowLeft,
+  AlertTriangle,
+  TrendingUp,
+  BarChart3,
+  Download,
+  Star,
+  MessageSquare
+} from "lucide-react";
+import { Link } from "wouter";
+import { useSimpleAuth } from "@/hooks/useSimpleAuth";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE } from '../../../shared/success-formula-phase1-template';
+
+// Enhanced Content for Primary/Dominant Patterns - Full detailed analysis with comprehensive transformation journey
+const PRIMARY_ARCHETYPE_CONTENT = {
+
+  "The Scarcity Survivor": {
+    name: "The Scarcity Survivor",
+    pillar: "Finances",
+    overview: "You live with a constant undercurrent of fear of not enough. Even when things are stable, part of you worries it could all disappear.",
+    firstKnowThis: "Being a \"scarcity survivor\" doesn't mean you're irresponsible with money — it means you've learned to live with a constant undercurrent of fear of not enough. Even when things are stable, part of you worries it could all disappear. This mindset comes from survival wiring — times when money really was scarce, or from experiences that taught you abundance is fragile. While caution can be wise, living in scarcity mode keeps you from building trust in your ability to create, grow, and sustain wealth.",
+    corePatterns: [
+      "Worries about losing money even when they have enough (Q7)",
+      "Avoids investing or risks because safety feels more important than growth (Q9)",
+      "Struggles to believe financial freedom is truly possible (Q10)",
+      "Admires those who are financially free but doubts it's possible for them (Q14)",
+      "Chooses stability over opportunity, even when capable of more"
+    ],
+    rootEmotions: [
+      "Fear of loss and instability",
+      "Anxiety around financial risk or change",
+      "Distrust that abundance will last",
+      "Relief only when money feels \"hoarded\" or untouched"
+    ],
+    whatThisCreates: [
+      "Safe but stagnant finances (lots of saving, little growth)",
+      "Missed opportunities for advancement or freedom",
+      "Constant stress about \"what if it all goes away\"",
+      "Difficulty feeling secure, no matter the balance"
+    ],
+    hiddenBeliefs: [
+      "\"There will never be enough.\"",
+      "\"If I risk, I'll lose everything.\"",
+      "\"Financial freedom is for others, not me.\"",
+      "\"Safety is more important than growth.\""
+    ],
+    completeTransformation: {
+      description: "Healing this pattern means shifting from fear-based safety to trust-based growth. Transformation looks like:",
+      transformationLooks: [
+        "Building financial confidence through small, safe risks",
+        "Trusting yourself to recover from setbacks",
+        "Believing that abundance can be created and sustained",
+        "Experiencing security from within, not just from numbers"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal cues of the Scarcity Survivor:",
+      internalSignals: [
+        "Feeling anxious spending even on necessities",
+        "Choosing savings accounts over investments, even long-term",
+        "Feeling like \"it could all vanish\" no matter your progress",
+        "Relief only when clinging tightly to stability"
+      ]
+    },
+    originStory: "This archetype often develops from lived scarcity — growing up without enough, experiencing financial instability, or watching others lose what they built. Over time, your nervous system equated money with fragility, teaching you that safety lies in holding back, not expanding.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You can spend or invest without spiraling into fear",
+        "You view money as renewable, not just fragile",
+        "You balance saving with opportunities for growth",
+        "You finally feel secure regardless of fluctuations"
+      ]
+    },
+    uniqueStrengths: "You are careful, thoughtful, and realistic about money. These are powerful traits. When paired with trust and openness, they allow you to protect yourself while also creating new opportunities.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how fear of \"not enough\" drives your money habits. Understand that this fear is protective, but not always accurate.",
+      practicalTools: [
+        "Journaling prompt: \"What would I do differently if I trusted money could come back?\"",
+        "Practice safe risks: start with small, low-stakes investments or opportunities",
+        "Reframe: safety comes from adaptability, not hoarding"
+      ],
+      selfCompassion: "Affirm: \"I am safe. Money is a renewable resource, and I can create it again.\""
+    }
+  },
+  "The Over-Worker": {
+    name: "The Over-Worker",
+    pillar: "Finances",
+    overview: "You've been conditioned to believe that money only comes through constant struggle. You take pride in being the hardest worker, but beneath it is fear of collapse if you stop grinding.",
+    firstKnowThis: "Being an \"over-worker\" in finances doesn't mean you're lazy if you ever rest — it means you've been conditioned to believe that money only comes through constant struggle. You may take pride in being the hardest worker in the room, but beneath it is a fear: \"If I stop grinding, it will all collapse.\" While discipline and effort are strengths, when worth is tied only to work, financial stability never feels enough. Rest feels unsafe, and life becomes about earning survival instead of building freedom.",
+    corePatterns: [
+      "Believes they must work harder than others to succeed (Q5)",
+      "Feels pressure to provide for others at their own expense (Q12)",
+      "Feels guilty when resting or slowing down (new item we added)",
+      "Equates productivity with financial worth",
+      "Struggles to enjoy money because it always feels tied to sacrifice"
+    ],
+    rootEmotions: [
+      "Fear of failure if not constantly working",
+      "Guilt when not producing or providing",
+      "Anxiety that slowing down = falling behind",
+      "Relief only when overachieving"
+    ],
+    whatThisCreates: [
+      "Financial gains at the cost of exhaustion and burnout",
+      "A belief that \"enough\" doesn't exist without sacrifice",
+      "Relationships strained by constant work focus",
+      "Limited time to enjoy the very wealth being built"
+    ],
+    hiddenBeliefs: [
+      "\"Money must come through struggle.\"",
+      "\"If I rest, I'll lose everything.\"",
+      "\"My worth is tied to how hard I work.\"",
+      "\"Providing for others means sacrificing myself.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Over-Worker pattern means shifting from grind to grounded productivity. Transformation looks like:",
+      transformationLooks: [
+        "Redefining wealth as freedom, not endless effort",
+        "Building systems that work with you instead of draining you",
+        "Allowing rest to fuel long-term success",
+        "Experiencing abundance without constant overwork"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal cues of the Over-Worker:",
+      internalSignals: [
+        "Feeling guilty taking time off or saying no to work",
+        "Anxiety when productivity slows",
+        "Pride in working harder than everyone else, even when exhausted",
+        "Viewing money as tied only to sacrifice, not flow"
+      ]
+    },
+    originStory: "This archetype often develops when financial stability felt tied to sacrifice. Maybe you watched caregivers grind endlessly, or learned early that hard work = survival. Over time, \"struggle\" became your financial identity.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You can take breaks without guilt",
+        "You see money as scalable, not just labor-bound",
+        "You feel calm knowing your worth isn't tied to output",
+        "Work fuels your life instead of consuming it"
+      ]
+    },
+    uniqueStrengths: "You are resilient, disciplined, and deeply committed. These are rare and valuable strengths. When paired with balance and systems, they allow you to build lasting wealth without burning out.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how your nervous system ties safety to overworking. Understand this isn't truth — it's conditioning.",
+      practicalTools: [
+        "Journaling prompt: \"What would wealth look like if it didn't require sacrifice?\"",
+        "Begin creating income streams not tied only to time/effort",
+        "Practice resting as an act of productivity (recovery = ROI)"
+      ],
+      selfCompassion: "Affirm: \"My worth is not tied to struggle. I deserve wealth that supports my life.\""
+    }
+  },
+  "The Avoider": {
+    name: "The Avoider",
+    pillar: "Finances",
+    overview: "Dealing with money feels overwhelming, stressful, or unsafe. You procrastinate on bills, avoid looking at accounts, or delay decisions because emotions attached to money feel too heavy.",
+    firstKnowThis: "Being a \"financial avoider\" doesn't mean you don't care about money — it means dealing with it feels overwhelming, stressful, or unsafe. You may procrastinate on bills, avoid looking at your accounts, or delay important decisions because the emotions attached to money feel too heavy. Avoidance is a protection strategy. By not looking, you shield yourself from fear of failure, mistakes, or the stress of responsibility. But avoiding also blocks clarity, keeps goals out of reach, and leaves you feeling stuck in financial limbo.",
+    corePatterns: [
+      "Procrastinates on financial steps (Q1)",
+      "Avoids looking closely at money to prevent stress (Q2)",
+      "Delays decisions out of fear of making mistakes (Q3)",
+      "Chooses short-term comfort over long-term clarity",
+      "Lets financial tasks pile up until urgent"
+    ],
+    rootEmotions: [
+      "Fear of failure or making the \"wrong move\"",
+      "Anxiety when facing money directly",
+      "Shame for \"not being better\" at handling finances",
+      "Relief only when distracting or avoiding"
+    ],
+    whatThisCreates: [
+      "Missed opportunities due to delayed action",
+      "Hidden stress from not knowing the real numbers",
+      "A cycle of procrastination → urgency → panic",
+      "Difficulty building confidence around money"
+    ],
+    hiddenBeliefs: [
+      "\"I can't be trusted with money.\"",
+      "\"If I don't look, I don't have to feel anxious.\"",
+      "\"It's safer to put it off than make a mistake.\"",
+      "\"Money always leads to stress.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Avoider pattern means building safety with clarity. Transformation looks like:",
+      transformationLooks: [
+        "Facing money step by step instead of all at once",
+        "Building trust in your ability to handle challenges",
+        "Replacing fear with confidence through small wins",
+        "Experiencing relief through action, not avoidance"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal cues of avoidance:",
+      internalSignals: [
+        "Feeling dread or tightness when checking accounts",
+        "Saying \"I'll deal with it later\" repeatedly",
+        "Choosing distraction when money tasks arise",
+        "Relief only when postponing"
+      ]
+    },
+    originStory: "This archetype often develops when money felt overwhelming, unpredictable, or shaming in your past. Maybe financial talks were stressful growing up, or mistakes led to harsh criticism. Over time, avoiding became your way of keeping peace with money — even if it cost you progress.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You check balances without spiraling into anxiety",
+        "You make small financial decisions with growing confidence",
+        "You replace delay with proactive steps",
+        "You find calm in clarity instead of fear in avoidance"
+      ]
+    },
+    uniqueStrengths: "You are thoughtful, cautious, and aware. When balanced, these traits allow you to approach money with care while still taking action. Your sensitivity becomes wisdom when paired with confidence.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how avoiding money temporarily relieves stress but creates long-term tension. Learn how your brain confuses avoidance with safety.",
+      practicalTools: [
+        "Journaling prompt: \"What small step could I take today that would ease my future self's stress?\"",
+        "Start with micro-check-ins: 2 minutes looking at accounts, then pause",
+        "Break financial tasks into 10-minute actions instead of all-or-nothing"
+      ],
+      selfCompassion: "Affirm: \"I am capable of facing money step by step. Clarity brings me peace.\""
+    }
+  },
+  "The Underearner/Giver": {
+    name: "The Underearner/Giver",
+    pillar: "Finances",
+    overview: "You've learned to undervalue your own worth while prioritizing others. You undercharge for work, avoid asking for raises, or give away resources at your own expense.",
+    firstKnowThis: "Being an \"underearner/giver\" doesn't mean you lack ambition — it means you've learned to undervalue your own worth while prioritizing others. You may undercharge for your work, avoid asking for raises, or give away time, money, or resources at your own expense. This isn't generosity gone wrong — it's a survival strategy. By keeping your needs small and giving more than you receive, you reduce the risk of rejection or criticism. But this habit keeps you stuck below your potential and prevents you from experiencing the abundance you deserve.",
+    corePatterns: [
+      "Feels guilty or uncomfortable receiving or charging what they're worth (Q4, Q12)",
+      "Gives or provides for others at the expense of their own stability (Q15)",
+      "Chooses financial \"safety\" even when opportunities for growth exist",
+      "Undervalues their work or time compared to others",
+      "Struggles to feel deserving of abundance"
+    ],
+    rootEmotions: [
+      "Guilt around receiving or earning \"too much\"",
+      "Shame about asking for fair value",
+      "Fear that abundance will create conflict or loss of connection",
+      "Relief only when giving more than receiving"
+    ],
+    whatThisCreates: [
+      "Chronic financial underachievement",
+      "Stress from putting others' needs ahead of your own security",
+      "Cycles of self-sacrifice and resentment",
+      "A ceiling on income, savings, and wealth-building potential"
+    ],
+    hiddenBeliefs: [
+      "\"I don't deserve abundance.\"",
+      "\"My value comes from giving, not receiving.\"",
+      "\"If I charge too much, people will leave.\"",
+      "\"It's safer to have less than to risk rejection.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Underearner / Giver pattern means reclaiming your worth and allowing reciprocity. Transformation looks like:",
+      transformationLooks: [
+        "Charging fairly and confidently for your work",
+        "Balancing giving with receiving",
+        "Believing that abundance benefits everyone",
+        "Experiencing wealth without guilt or apology"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal cues of under-earning:",
+      internalSignals: [
+        "Discomfort when talking about money or pricing",
+        "Guilt when asking for or receiving support",
+        "Pride in sacrifice, even when it hurts your stability",
+        "A sense of being \"stuck\" despite effort"
+      ]
+    },
+    originStory: "This archetype often develops when worth was tied to service, humility, or sacrifice. Maybe you were praised for giving, discouraged from asking, or taught that abundance was selfish. Over time, you internalized the belief that less for you meant safety or acceptance.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You ask for fair compensation without shrinking",
+        "You receive without guilt or over-explaining",
+        "You give from overflow, not depletion",
+        "You feel comfortable having \"more\" without fearing rejection"
+      ]
+    },
+    uniqueStrengths: "You are generous, compassionate, and service-oriented. These are powerful traits. When paired with honoring your worth, they allow you to create wealth while continuing to uplift others.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how guilt drives you to shrink your value. Learn how your nervous system equates abundance with danger, and how this belief can shift.",
+      practicalTools: [
+        "Journaling prompt: \"What's one place I've been undervaluing myself?\"",
+        "Practice stating your worth without apology",
+        "Allow small acts of receiving — say \"thank you\" without repayment"
+      ],
+      selfCompassion: "Affirm: \"My worth is not measured by sacrifice. I deserve abundance without guilt.\""
+    }
+  },
+  "The Self-Saboteur": {
+    name: "The Self-Saboteur",
+    pillar: "Finances",
+    overview: "Deep down, part of you feels unsafe or undeserving of sustained success. You make progress, then unconsciously undermine yourself by slipping back into old habits.",
+    firstKnowThis: "Being a \"self-saboteur\" in finances doesn't mean you're reckless — it means that deep down, part of you feels unsafe or undeserving of sustained success. You may set clear goals, make progress, and then unconsciously undermine yourself by slipping back into old habits. This isn't lack of ability — it's protection. If success feels risky, unfamiliar, or undeserved, your system finds ways to \"reset\" to what feels safe. The result is a frustrating cycle: build → undo → blame → repeat.",
+    corePatterns: [
+      "Spends impulsively to cope with emotions, then feels guilt (Q8)",
+      "Avoids or quits investing because of fear of loss (Q9, shared overlap but different driver than Scarcity)",
+      "Slips back into old money habits after progress (Q11)",
+      "Doubts lasting financial freedom is possible (Q14, reframed from admiration → disbelief)",
+      "Distracts themselves when goals feel too big or intimidating"
+    ],
+    rootEmotions: [
+      "Fear of success bringing new pressure or change",
+      "Shame about \"messing up again\"",
+      "Anxiety about responsibility that comes with more money",
+      "Relief only when sabotaging progress back to a \"familiar baseline\""
+    ],
+    whatThisCreates: [
+      "Cycles of financial progress followed by setbacks",
+      "Growing frustration and loss of confidence",
+      "Inconsistent ability to build long-term stability",
+      "A feeling that money is always slipping away, no matter the effort"
+    ],
+    hiddenBeliefs: [
+      "\"I always ruin my own success.\"",
+      "\"If I reach my goals, I won't be able to handle it.\"",
+      "\"Success will change how people see me.\" (Q6 we re-mapped here)",
+      "\"I'm safer staying small.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Self-Saboteur pattern means learning to stay consistent even when discomfort arises. Transformation looks like:",
+      transformationLooks: [
+        "Identifying triggers that lead to relapse",
+        "Building safety around success and abundance",
+        "Learning to sustain progress without self-attack",
+        "Experiencing money as stability, not a trap"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal cues of sabotage:",
+      internalSignals: [
+        "Feeling anxious when financial goals are in reach",
+        "Overspending or distracting right after progress",
+        "Rationalizing slips as \"no big deal\" until momentum is lost",
+        "Relieving pressure by retreating to old habits"
+      ]
+    },
+    originStory: "This archetype often develops when success was tied to pressure, criticism, or loss. Maybe you saw people lose relationships or peace when money grew, or were told abundance would make you selfish. Over time, your system decided success wasn't safe — so sabotage became protection.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You feel calm sustaining financial routines",
+        "You trust yourself to handle success without self-destruction",
+        "You replace guilt with pride in progress",
+        "You stay consistent even when it feels uncomfortable to grow"
+      ]
+    },
+    uniqueStrengths: "You are ambitious, creative, and resilient. Even when you slip, you start again — proof of your determination. When paired with self-trust, these traits allow you to build wealth that lasts instead of cycling back.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how your nervous system treats success as unsafe. Learn how fear of success can drive relapse just as much as fear of failure.",
+      practicalTools: [
+        "Journaling prompt: \"What feels scary about achieving my financial goal?\"",
+        "Create \"safety anchors\" for success (rituals that make abundance feel normal)",
+        "Replace relapse shame with reflection: \"What triggered this, and what's my new plan?\""
+      ],
+      selfCompassion: "Affirm: \"I can sustain success. I am safe, deserving, and capable of abundance.\""
+    }
+  },
+  "The Balanced Steward": {
+    name: "The Balanced Steward",
+    pillar: "Finances",
+    overview: "You've developed a healthy, grounded relationship with money. You treat money as a tool, not a trap. You plan responsibly, take thoughtful risks, and enjoy what you've earned without guilt.",
+    firstKnowThis: "Being a \"balanced steward\" doesn't mean you never worry about money — it means you've developed a healthy, grounded relationship with it. You treat money as a tool, not a trap. You're able to plan responsibly, take thoughtful risks, and enjoy what you've earned without guilt. This doesn't mean you never feel resistance. It means you've built the trust and consistency to navigate money without slipping into extremes of scarcity, overwork, avoidance, or sabotage.",
+    corePatterns: [
+      "Plans and manages money with confidence (Q16–18 positive cluster equivalent)",
+      "Balances saving, spending, and investing without extremes",
+      "Makes financial decisions with clarity, not fear",
+      "Feels safe receiving abundance without guilt",
+      "Sees wealth as freedom and responsibility, not stress"
+    ],
+    rootEmotions: [
+      "Confidence in their ability to handle money",
+      "Calm awareness when making decisions",
+      "Gratitude for what they have and trust in their ability to create more",
+      "Joy in using money to support both goals and experiences"
+    ],
+    whatThisCreates: [
+      "Steady financial growth and stability",
+      "Freedom to make choices without fear of loss or guilt",
+      "Stronger confidence in handling challenges and opportunities",
+      "A sense of alignment between money and life values"
+    ],
+    hiddenBeliefs: [
+      "\"I can be trusted with money.\"",
+      "\"Wealth is a tool for freedom, growth, and impact.\"",
+      "\"I deserve to enjoy what I earn.\"",
+      "\"Abundance expands when managed with care.\""
+    ],
+    completeTransformation: {
+      description: "Your journey isn't about fixing — it's about reinforcing balance. Transformation looks like:",
+      transformationLooks: [
+        "Continuing to build confidence in managing, investing, and enjoying money",
+        "Staying aware of subtle patterns (scarcity, overwork, avoidance) and redirecting them early",
+        "Expanding your definition of wealth beyond money — into time, freedom, and impact",
+        "Using money as an ally in living your values"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal signals of balance:",
+      internalSignals: [
+        "You feel calm, not anxious, when looking at finances",
+        "You make decisions without avoidance or overthinking",
+        "You can spend and save without guilt",
+        "You see financial progress as steady, not all-or-nothing"
+      ]
+    },
+    originStory: "Balanced patterns often emerge after moving through financial resistance. Maybe you once lived in scarcity, overworked, or sabotaged progress — and learned through experience that these extremes didn't serve you. Balance comes from integrating those lessons into a healthier relationship with money.",
+    transformationMarkers: {
+      description: "You'll know you're deepening balance when:",
+      healingSignals: [
+        "You see opportunities as exciting, not threatening",
+        "You feel stable even when things fluctuate",
+        "You invest confidently in both security and growth",
+        "You use wealth to support freedom, joy, and purpose"
+      ]
+    },
+    uniqueStrengths: "You are thoughtful, grounded, and intentional. These strengths allow you to manage money with both wisdom and freedom, creating a financial foundation that supports all other areas of your life.",
+    nextSteps: {
+      deeperUnderstanding: "Reflect on where subtle resistance still whispers (fear of loss, guilt in receiving, or pressure to overwork). Awareness keeps you steady.",
+      practicalTools: [
+        "Journaling prompt: \"How does financial balance allow me to live my values?\"",
+        "Regular money check-ins to reinforce confidence",
+        "Expanding goals: consider not just income, but time, freedom, and impact"
+      ],
+      selfCompassion: "Affirm: \"I am a capable steward of abundance. My balance creates stability and freedom.\""
+    }
+  },
+  "The All-or-Nothing Perfectionist": {
+    name: "The All-or-Nothing Perfectionist",
+    pillar: "Health",
+    overview: "You tie success to extremes, starting routines with intensity but stopping when perfection slips. This cycle prevents the steady consistency that true health is built on.",
+    firstKnowThis: "Being an \"all-or-nothing perfectionist\" in health doesn't mean you're weak — it means you've learned to tie success to extremes. You start routines with intensity, push hard, and expect quick results. But when results don't come fast enough or perfection slips, you stop altogether. This isn't laziness — it's a nervous system wired to believe \"perfect or nothing.\" While drive and ambition are strengths, this cycle prevents the steady consistency that true health is built on.",
+    corePatterns: [
+      "Starts strong with new diets, workouts, or routines but burns out quickly",
+      "Quits when progress slows or perfection isn't possible",
+      "Believes extreme effort is required for change",
+      "Feels \"on track\" or \"off track\" with little middle ground",
+      "Associates discipline with worth"
+    ],
+    rootEmotions: [
+      "Fear of failure if results aren't perfect",
+      "Shame when \"slipping\" even slightly",
+      "Anxiety when effort doesn't lead to fast results",
+      "Relief only when over-performing"
+    ],
+    whatThisCreates: [
+      "Inconsistent progress — cycles of intensity and burnout",
+      "Discouragement and self-blame when results fade",
+      "Physical exhaustion from unsustainable routines",
+      "A belief that health is unattainable unless extreme"
+    ],
+    hiddenBeliefs: [
+      "\"If I can't do it perfectly, it's not worth doing.\"",
+      "\"Consistency doesn't count — only intensity matters.\"",
+      "\"Health requires sacrifice, not balance.\"",
+      "\"One slip means I've failed.\""
+    ],
+    completeTransformation: {
+      description: "Healing this pattern means shifting from extremes to balance. Transformation looks like:",
+      transformationLooks: [
+        "Learning that progress is built on small, steady steps",
+        "Finding value in \"good enough\" routines",
+        "Allowing flexibility without shame",
+        "Creating sustainable habits instead of burning out"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal cues of being in All-or-Nothing mode:",
+      internalSignals: [
+        "Excitement when starting, dread when slowing down",
+        "A \"what's the point\" mindset after missing one workout or meal plan",
+        "Urge to restart with even stricter rules after a setback",
+        "Relief only when doing things \"perfectly\""
+      ]
+    },
+    originStory: "This archetype often develops in environments where achievement was praised but mistakes were criticized. You may have learned that being disciplined, strong, or \"perfect\" earned approval. Over time, this became the only way you knew how to approach health.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You can miss a day without giving up entirely",
+        "You celebrate small progress instead of chasing extremes",
+        "Your routines feel energizing instead of exhausting",
+        "Health becomes part of your life, not a constant test"
+      ]
+    },
+    uniqueStrengths: "Your drive, ambition, and commitment are incredible strengths. When balanced with self-compassion, they allow you to create powerful and sustainable changes in your health.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how your nervous system links \"safety\" with extreme performance, and how perfectionism hijacks your motivation.",
+      practicalTools: [
+        "Journaling prompt: \"What progress have I dismissed because it wasn't perfect?\"",
+        "Build \"minimum routines\" (e.g., 10 min walk instead of full workout)",
+        "Practice reframing slips: progress ≠ perfection"
+      ],
+      selfCompassion: "Affirm: \"Consistency matters more than perfection. Every step counts.\""
+    }
+  },
+  "The Self-Neglecting Caregiver": {
+    name: "The Self-Neglecting Caregiver", 
+    pillar: "Health",
+    overview: "You put others first, often at the expense of your own well-being. You feel guilty for prioritizing your health because \"someone else needs me more.\"",
+    firstKnowThis: "Being a \"self-neglecting caregiver\" in health doesn't mean you don't care about yourself — it means you've been taught to put others first, often at the expense of your own well-being. You may feel guilty for prioritizing your health, sacrifice rest to meet responsibilities, or push aside your needs because \"someone else needs me more.\" This pattern often develops from a deep sense of duty or worth tied to serving others. While caring is a strength, neglecting yourself drains your energy and leaves you unable to give from a full cup.",
+    corePatterns: [
+      "Feels guilty when taking time for self-care or rest (Q8)",
+      "Prioritizes family, work, or others' needs before their own health (Q11, Q15)",
+      "Sacrifices sleep, meals, or exercise to meet responsibilities",
+      "Rarely invests in their own well-being without outside pressure",
+      "Equates self-care with selfishness"
+    ],
+    rootEmotions: [
+      "Guilt when focusing on personal needs",
+      "Anxiety that others will suffer if you slow down",
+      "Shame for resting or \"taking up space\"",
+      "Relief only when others are cared for first"
+    ],
+    whatThisCreates: [
+      "Chronic exhaustion and burnout",
+      "Inconsistent or neglected health routines",
+      "Resentment beneath the surface when sacrifices pile up",
+      "Declining health that eventually limits the ability to give"
+    ],
+    hiddenBeliefs: [
+      "\"Taking care of myself is selfish.\"",
+      "\"I'm only valuable when I'm caring for others.\"",
+      "\"If I slow down, everything will fall apart.\"",
+      "\"My needs always come last.\""
+    ],
+    completeTransformation: {
+      description: "Healing this pattern means learning that self-care is not selfish, it's essential. Transformation looks like:",
+      transformationLooks: [
+        "Viewing health as fuel for showing up for others",
+        "Creating guilt-free space for rest, nutrition, and movement",
+        "Balancing giving with receiving",
+        "Realizing that caring for yourself expands your capacity to care for others"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal cues of the Self-Neglecting Caregiver:",
+      internalSignals: [
+        "Feeling guilty for scheduling workouts, doctor visits, or downtime",
+        "Skipping meals, rest, or health appointments for work/family",
+        "Saying \"I don't have time\" when it comes to your own wellness",
+        "Pride in self-sacrifice, even when it leaves you depleted"
+      ]
+    },
+    originStory: "This archetype often develops when love or respect felt tied to what you provided for others. Maybe you grew up praised for being responsible, dependable, or \"the strong one.\" Over time, you internalized the message: others first, me last.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You feel calm, not guilty, while prioritizing self-care",
+        "You balance responsibilities with health routines that energize you",
+        "You say yes to yourself as easily as you say yes to others",
+        "You realize caring for yourself strengthens your ability to give"
+      ]
+    },
+    uniqueStrengths: "You are compassionate, dependable, and deeply empathetic. These are powerful gifts. When paired with honoring your own needs, they allow you to give sustainably without losing yourself in the process.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how guilt shows up when you prioritize yourself. Understand this guilt is learned — not truth.",
+      practicalTools: [
+        "Journaling prompt: \"When I care for myself, how does it help me care for others?\"",
+        "Practice saying: \"Rest is part of my responsibility.\"",
+        "Schedule self-care like a non-negotiable appointment."
+      ],
+      selfCompassion: "Affirm: \"My needs matter. Taking care of myself gives me more to give.\""
+    }
+  },
+  "The Over-Functioning Body-Minder": {
+    name: "The Over-Functioning Body-Minder",
+    pillar: "Health",
+    overview: "You control your body through strict rules, comparison, and pressure, rather than listening to its needs. You obsess over routines and believe transformation requires extreme sacrifice.",
+    firstKnowThis: "Being an \"over-functioning body-minder\" in health doesn't mean you're disciplined in a healthy way — it means you've learned to control your body through strict rules, comparison, and pressure, rather than listening to its needs. You may obsess over routines, compare yourself to others, or believe transformation requires extreme sacrifice. This pattern often comes from tying worth to appearance, productivity, or control. While structure and awareness are strengths, rigidity drains joy and keeps you stuck in cycles of pressure and discouragement.",
+    corePatterns: [
+      "Compares their body or progress to others and feels discouraged (Q9)",
+      "Believes real transformation requires extreme effort or sacrifice (Q12)",
+      "Pressures themselves to follow strict routines and rules (Q14, revised for rigidity)",
+      "Focuses more on control than enjoyment of health practices",
+      "Feels guilty if not pushing hard enough"
+    ],
+    rootEmotions: [
+      "Anxiety about never \"measuring up\"",
+      "Shame tied to body image or progress",
+      "Fear of failure if rules aren't followed",
+      "Relief only when fully in control"
+    ],
+    whatThisCreates: [
+      "Obsession with routines that feels draining instead of empowering",
+      "Inability to celebrate progress because it never feels \"enough\"",
+      "Burnout from unsustainable pressure",
+      "Loss of joy and flexibility in health"
+    ],
+    hiddenBeliefs: [
+      "\"I'll never measure up.\"",
+      "\"Only extreme effort creates real results.\"",
+      "\"If I loosen control, everything will fall apart.\"",
+      "\"My worth is tied to how I look or perform.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Body-Minder pattern means shifting from rigid control to compassionate consistency. Transformation looks like:",
+      transformationLooks: [
+        "Allowing progress to be steady and imperfect",
+        "Building routines that feel sustainable, not punishing",
+        "Redefining health as how you feel, not just how you look",
+        "Learning to trust your body instead of policing it"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal cues of the Body-Minder:",
+      internalSignals: [
+        "Feeling guilty after rest days or missed workouts",
+        "Comparing your progress to others constantly",
+        "Believing health equals restriction or sacrifice",
+        "Thinking \"I should be doing more\" even when you're consistent"
+      ]
+    },
+    originStory: "This archetype often develops in environments where performance, image, or discipline were overly praised. You may have been taught that your body had to meet certain standards, or that worth came from achievement, not rest. Over time, control became your strategy to feel secure.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You can rest without guilt",
+        "You enjoy routines instead of forcing them",
+        "You celebrate small progress instead of chasing \"enough\"",
+        "Your health feels like freedom, not a test"
+      ]
+    },
+    uniqueStrengths: "You are disciplined, determined, and highly self-aware. These strengths can create incredible results when balanced with self-compassion. When you let go of harsh control, your discipline becomes sustainable and life-giving.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how control has become your safety net — but also your prison. Learn how your brain confuses rigidity with security.",
+      practicalTools: [
+        "Journaling prompt: \"What do I fear will happen if I ease up on the rules?\"",
+        "Build flexibility into routines (e.g., optional workout swaps, meals for pleasure).",
+        "Practice reframing progress: from \"perfect body\" to \"energized and resilient body.\""
+      ],
+      selfCompassion: "Affirm: \"I don't need extreme control to be healthy. Consistency and compassion sustain me.\""
+    }
+  },
+  "The Silenced Symptom Suppressor": {
+    name: "The Silenced Symptom Suppressor",
+    pillar: "Health",
+    overview: "You minimize or ignore health issues until they become impossible to overlook. You avoid checkups and push through discomfort because slowing down feels risky or weak.",
+    firstKnowThis: "Being a \"silenced symptom suppressor\" doesn't mean you don't care about your health — it means you've learned to minimize or ignore issues until they become impossible to overlook. You may avoid medical checkups, downplay symptoms, or push through discomfort because slowing down feels risky, inconvenient, or weak. This isn't denial — it's a survival strategy. If you don't acknowledge the problem, you don't have to feel the fear, guilt, or disruption that comes with it. But unaddressed issues only grow louder, costing you peace and vitality.",
+    corePatterns: [
+      "Avoids medical checkups or feedback that might reveal problems (Q4)",
+      "Distracts themselves from health issues instead of addressing them (Q5)",
+      "Pushes through pain or discomfort rather than pausing",
+      "Tells themselves \"it's nothing\" even when signs persist",
+      "Waits until a problem feels urgent before acting"
+    ],
+    rootEmotions: [
+      "Fear of what a diagnosis might mean",
+      "Anxiety about losing control if a problem is acknowledged",
+      "Shame for \"not taking care\" sooner",
+      "Relief only when pretending nothing is wrong"
+    ],
+    whatThisCreates: [
+      "Small issues turning into bigger health challenges",
+      "A cycle of denial, panic, and delayed action",
+      "Physical and emotional stress from carrying hidden worry",
+      "Loss of trust in your body's signals"
+    ],
+    hiddenBeliefs: [
+      "\"If I ignore it, it isn't real.\"",
+      "\"Acknowledging problems makes me weak.\"",
+      "\"I don't have time to deal with this.\"",
+      "\"Health issues mean I've failed.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Symptom Suppressor pattern means learning to face discomfort with courage and compassion. Transformation looks like:",
+      transformationLooks: [
+        "Seeing early intervention as strength, not weakness",
+        "Building trust in your body by listening to its signals",
+        "Facing health issues without shame",
+        "Realizing prevention saves pain, time, and energy in the long run"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal signals of suppression:",
+      internalSignals: [
+        "Skipping checkups out of avoidance",
+        "Minimizing symptoms (\"it's just stress,\" \"it'll pass\")",
+        "Feeling uneasy when others suggest getting something checked",
+        "Relief only when ignoring or distracting from discomfort"
+      ]
+    },
+    originStory: "This archetype often develops when health issues felt overwhelming or taboo in your past — maybe problems weren't discussed, or you saw others \"push through\" without complaint. Over time, silence became your way of staying strong and safe.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You book a checkup without dread",
+        "You acknowledge discomfort without catastrophizing it",
+        "You respond to symptoms early, with calm and clarity",
+        "You feel empowered by listening to your body instead of silencing it"
+      ]
+    },
+    uniqueStrengths: "You are resilient and determined — able to endure challenges. When combined with openness and self-compassion, these strengths allow you to face health issues with confidence, turning silence into empowerment.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how ignoring symptoms feels like safety in the short term, but increases fear over time. Learn how your brain confuses avoidance with control.",
+      practicalTools: [
+        "Journaling prompt: \"What do I fear will happen if I acknowledge this issue?\"",
+        "Practice small acts of attention: check in with one area of your body daily",
+        "Reframe appointments/checkups as acts of courage, not fear"
+      ],
+      selfCompassion: "Affirm: \"Listening to my body makes me stronger, not weaker.\""
+    }
+  },
+  "The Shame-Driven Rebounder": {
+    name: "The Shame-Driven Rebounder",
+    pillar: "Health",
+    overview: "Your health habits are fueled by guilt and shame rather than compassion. You start strong after setbacks, push with intensity, then slip back when shame or exhaustion takes over.",
+    firstKnowThis: "Being a \"shame-driven rebounder\" doesn't mean you lack discipline — it means your health habits are fueled by guilt and shame rather than compassion and consistency. You may start strong after a setback, push yourself with intensity, and then slip back when shame or exhaustion takes over. This isn't laziness — it's a cycle: guilt → intense action → burnout → relapse → guilt again. What keeps you stuck isn't effort, but the emotional weight driving it.",
+    corePatterns: [
+      "Procrastinates on health action, then overcompensates with bursts of effort (Q6)",
+      "Uses food, alcohol, or habits to cope with stress, then feels guilt (Q7)",
+      "Believes it's \"too late\" to achieve the body or health they want (Q10)",
+      "Feels like they don't have enough time/energy to sustain progress (Q11)",
+      "Cycles between short progress and long plateaus/relapses"
+    ],
+    rootEmotions: [
+      "Shame after setbacks or coping behaviors",
+      "Guilt for not being \"consistent enough\"",
+      "Fear that progress won't last",
+      "Anxiety about running out of time to change"
+    ],
+    whatThisCreates: [
+      "Short bursts of health effort followed by long lapses",
+      "Emotional exhaustion and low confidence in change",
+      "Reliance on guilt as a motivator instead of self-care",
+      "A growing belief that \"I'll always fall back\""
+    ],
+    hiddenBeliefs: [
+      "\"I can't be consistent.\"",
+      "\"I always ruin my own progress.\"",
+      "\"Health is about punishment after mistakes.\"",
+      "\"Shame is what keeps me on track.\""
+    ],
+    completeTransformation: {
+      description: "Healing this pattern means replacing shame with self-compassion and consistency. Transformation looks like:",
+      transformationLooks: [
+        "Seeing progress as a path, not punishment",
+        "Building small habits you can actually sustain",
+        "Learning to forgive setbacks instead of spiraling",
+        "Staying steady instead of swinging between extremes"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal cues of the Rebounder:",
+      internalSignals: [
+        "Starting a new routine after \"slipping up\" as a form of self-punishment",
+        "Feeling guilt-driven motivation instead of excitement",
+        "Thinking \"what's the point?\" after small lapses",
+        "Relief only when over-correcting with extreme effort"
+      ]
+    },
+    originStory: "This archetype often develops when discipline was tied to guilt — perhaps being shamed for body image, eating habits, or \"lack of effort.\" You may have learned that mistakes made you \"bad\" and effort was about redeeming yourself. Over time, shame became the fuel for your health cycles.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You respond to setbacks with kindness, not punishment",
+        "Your routines are steady instead of stop-start",
+        "You no longer rely on guilt to push you into action",
+        "Health feels like nourishment, not repayment"
+      ]
+    },
+    uniqueStrengths: "You are resilient and determined — capable of bouncing back even after setbacks. When fueled by compassion instead of shame, this resilience becomes your foundation for lasting health.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how shame activates your cycle: it feels like motivation, but it burns out quickly. Learn why guilt hijacks consistency.",
+      practicalTools: [
+        "Journaling prompt: \"What would change if I treated a setback as feedback, not failure?\"",
+        "Replace \"punishment routines\" with small, steady habits",
+        "Practice reframing: from \"I messed up\" to \"I learned something.\""
+      ],
+      selfCompassion: "Affirm: \"Setbacks don't erase progress. I grow through consistency, not punishment.\""
+    }
+  },
+  "The Balanced Health Seeker": {
+    name: "The Balanced Health Seeker",
+    pillar: "Health",
+    overview: "You approach health with consistency, flexibility, and self-compassion. You prioritize well-being without guilt and allow balance between discipline and enjoyment.",
+    firstKnowThis: "Being a \"balanced health seeker\" doesn't mean you never struggle — it means you've learned to approach health with consistency, flexibility, and self-compassion. You prioritize your well-being without guilt, set sustainable goals, and allow balance between discipline and enjoyment. This doesn't mean you're perfect. It means you trust the process. You can miss a day, adjust routines, or take rest without losing momentum — because your health isn't defined by extremes, it's guided by integration.",
+    corePatterns: [
+      "Maintains steady routines instead of extreme cycles (Q16–Q18 positive items)",
+      "Practices both discipline and rest without guilt",
+      "Sees setbacks as part of growth, not failure",
+      "Values energy, vitality, and self-care as much as results",
+      "Balances self-care with other life priorities"
+    ],
+    rootEmotions: [
+      "Confidence in ability to care for self",
+      "Calm acceptance of imperfection",
+      "Joy in the process, not just the outcome",
+      "Trust in the body's resilience"
+    ],
+    whatThisCreates: [
+      "Consistent, long-term health habits",
+      "Reduced stress around food, exercise, or routines",
+      "More energy and resilience in daily life",
+      "A sense of health as freedom, not punishment"
+    ],
+    hiddenBeliefs: [
+      "\"I can take care of myself without guilt.\"",
+      "\"Consistency matters more than perfection.\"",
+      "\"Rest and effort are equally important.\"",
+      "\"My health is an ongoing relationship, not a pass/fail test.\""
+    ],
+    completeTransformation: {
+      description: "Your path isn't about fixing — it's about reinforcing balance. Transformation looks like:",
+      transformationLooks: [
+        "Continuing to integrate health into daily life with ease",
+        "Letting routines flex with seasons of life",
+        "Finding peace in progress, not punishment",
+        "Modeling a healthy relationship with wellness for others"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal signals of balance:",
+      internalSignals: [
+        "You feel comfortable adjusting routines without shame",
+        "You see health as empowering, not overwhelming",
+        "You prioritize vitality, not just appearance",
+        "You feel consistent energy and stability over time"
+      ]
+    },
+    originStory: "Balanced patterns often emerge after experiencing cycles of resistance. Maybe you've been the perfectionist, the suppressor, or the rebounder — and learned those extremes didn't serve you. Through trial and self-awareness, you integrated lessons into a healthier, steadier relationship with your body.",
+    transformationMarkers: {
+      description: "You'll know you're deepening balance when:",
+      healingSignals: [
+        "You adapt habits without spiraling into guilt",
+        "You stay consistent through both high- and low-energy seasons",
+        "You enjoy health as part of life, not a separate battle",
+        "You feel peace in your routines, not pressure"
+      ]
+    },
+    uniqueStrengths: "You are steady, adaptable, and resilient. You bring both discipline and compassion to your health, creating a foundation that supports all areas of your life. This balanced approach is your greatest strength — and it inspires others.",
+    nextSteps: {
+      deeperUnderstanding: "Reflect on where subtle resistance still whispers (perfectionism, avoidance, shame). Balance thrives when you stay aware of those old voices without letting them take over.",
+      practicalTools: [
+        "Journaling prompt: \"How has balance improved my life outside of health?\"",
+        "Regular check-in: adjust routines to life seasons instead of forcing extremes",
+        "Expand focus: bring balance into other pillars (relationships, finances, inner peace)."
+      ],
+      selfCompassion: "Affirm: \"Balance is my strength. I honor my body with consistency, compassion, and trust.\""
+    }
+  },
+  "The Over-Giver": {
+    name: "The Over-Giver",
+    pillar: "Relationships",
+    overview: "You equate giving with being loved, putting others' needs ahead of your own and feeling uneasy letting others care for you.",
+    firstKnowThis: "Being an \"over-giver\" in relationships doesn't mean you aren't strong or worthy — it means you've learned to equate giving with being loved. You may put others' needs ahead of your own, give more than you receive, or feel uneasy letting others care for you. Deep down, it's a protective strategy: if you're always giving, you feel less likely to be rejected. While generosity is a strength, when it comes from fear instead of choice, it leaves you drained, unseen, and disconnected from the mutual love you want.",
+    corePatterns: [
+      "Feels responsible for keeping others happy or stable",
+      "Puts in more effort than they receive back",
+      "Struggles to say no without guilt",
+      "Feels anxious or guilty when receiving care or support",
+      "Equates being helpful with being lovable"
+    ],
+    rootEmotions: [
+      "Fear of rejection if not giving enough",
+      "Shame or doubt about being worthy \"as you are\"",
+      "Anxiety when needs are unspoken or unmet",
+      "Guilt when prioritizing yourself over others"
+    ],
+    whatThisCreates: [
+      "Unbalanced relationships where others lean on you but don't match your effort",
+      "Burnout and resentment beneath the surface",
+      "Difficulty trusting that people love you for you, not what you provide",
+      "A cycle of craving reciprocity but settling for sacrifice"
+    ],
+    hiddenBeliefs: [
+      "\"I have to earn love.\"",
+      "\"My needs are less important.\"",
+      "\"If I stop giving, I'll lose the relationship.\"",
+      "\"Love survives only if I hold it together.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Over-Giver pattern doesn't mean giving less — it means giving differently. Transformation looks like:",
+      transformationLooks: [
+        "Choosing when and how to give, rather than out of fear",
+        "Allowing yourself to receive care without guilt",
+        "Trusting that love is mutual, not one-sided",
+        "Creating space for reciprocity and balance"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal cues that signal Over-Giving:",
+      internalSignals: [
+        "Feeling restless or anxious if you're not \"doing\" something for others",
+        "Worrying people will leave if you say no",
+        "Guilt when you set boundaries or prioritize your needs",
+        "Feeling unseen or unappreciated despite how much you give"
+      ]
+    },
+    originStory: "This archetype often begins in environments where love felt conditional. Maybe you were praised for being helpful, punished for being \"selfish,\" or felt safer taking care of others than asking for care yourself. Over time, you learned that giving earned acceptance, while expressing your own needs felt risky.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You can say no without spiraling into guilt",
+        "You feel safe letting others show up for you",
+        "Your relationships begin to feel mutual and balanced",
+        "You give because you want to — not because you feel you must"
+      ]
+    },
+    uniqueStrengths: "Your empathy and generosity are real gifts. You're naturally tuned into others' needs and skilled at creating harmony. When balanced with boundaries, these strengths create relationships that are deeply nourishing, where care flows both ways.",
+    nextSteps: {
+      deeperUnderstanding: "Explore how your nervous system ties giving to safety, and how old relational patterns shaped your reflex to over-function.",
+      practicalTools: [
+        "Journaling prompt: \"What do I fear will happen if I stop giving?\"",
+        "Scripts for saying no with clarity and kindness",
+        "Daily \"receiving practice\": let small acts of care land without repayment"
+      ],
+      selfCompassion: "Affirm: \"My presence is enough. I don't need to over-give to be loved.\""
+    }
+  },
+  "The Closed Off": {
+    name: "The Closed Off",
+    pillar: "Relationships",
+    overview: "You want closeness, but a well-built guard keeps people at arm's length. It once protected you from hurt; now it blocks the intimacy you actually want.",
+    firstKnowThis: "Being \"closed off\" in seeking love doesn't mean you don't want a relationship — it means you've learned to guard your heart so tightly that real closeness feels risky. You may go on dates, talk to people, or even start relationships, but when it comes to opening up emotionally, you keep walls in place. This pattern is a protective strategy. It likely began as a way to avoid rejection, judgment, or past hurt. While it keeps you safe from pain, it also blocks the depth of intimacy and connection you truly crave.",
+    corePatterns: [
+      "Keeps conversations surface-level to avoid being too vulnerable (Q3)",
+      "Ends relationships early to avoid future heartbreak (Q14)",
+      "Pulls away when someone gets emotionally close (Q6)",
+      "Struggles to trust that love will last when challenges arise (Q10)",
+      "Shares little about personal struggles, even with interested partners (Q1)"
+    ],
+    rootEmotions: [
+      "Fear of rejection or abandonment if truly seen",
+      "Shame about being \"too much\" or \"not enough\"",
+      "Anxiety around vulnerability and dependence",
+      "Comfort in independence as a shield against pain"
+    ],
+    whatThisCreates: [
+      "Dating that feels more like \"interviews\" than authentic connection",
+      "A cycle of short relationships that don't deepen",
+      "Partners who sense emotional distance and disengage",
+      "A lingering loneliness, even when actively seeking love"
+    ],
+    hiddenBeliefs: [
+      "\"If I open up, I'll be judged or hurt.\"",
+      "\"It's safer to leave first than risk being left.\"",
+      "\"Needing someone makes me weak.\"",
+      "\"I can't fully trust love to last.\""
+    ],
+    completeTransformation: {
+      description: "Healing this pattern isn't about tearing down your walls overnight — it's about learning safe, gradual openness. Transformation looks like:",
+      transformationLooks: [
+        "Sharing small truths without overthinking them",
+        "Trusting that love can survive imperfection",
+        "Choosing connection even when it feels vulnerable",
+        "Experiencing independence as a strength, not a shield"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal signals that you're in \"Closed Off\" mode:",
+      internalSignals: [
+        "Feeling uneasy when conversations turn emotional",
+        "Wanting connection but feeling tense when it's offered",
+        "Overthinking how much to share, fearing it's \"too much\"",
+        "Preferring independence even while craving intimacy"
+      ]
+    },
+    originStory: "This archetype often develops from early experiences where vulnerability felt unsafe. Maybe love was conditional on being strong, maybe emotional openness was judged or rejected, or maybe heartbreak taught you that opening up equals pain. Over time, closing off became your way of staying safe.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You can share feelings without a \"safety script\"",
+        "You let potential partners see your struggles, not just your strengths",
+        "You stop ending things early just to protect yourself",
+        "You feel both independent and deeply connected in love"
+      ]
+    },
+    uniqueStrengths: "Your independence and discernment are real strengths. You don't open up to just anyone — and that's wisdom. When balanced with vulnerability, these gifts allow you to build relationships that are both safe and deeply authentic.",
+    nextSteps: {
+      deeperUnderstanding: "Learn how your nervous system equates openness with danger, and why your mind sees \"pulling back\" as safer than leaning in.",
+      practicalTools: [
+        "Journaling prompts: \"What's one thing I could share today without overthinking it?\"",
+        "Scripts for safe vulnerability on early dates",
+        "Mind-body practices to calm anxiety when closeness arises"
+      ],
+      selfCompassion: "Affirm: \"Opening up is a strength, not a weakness. I am safe to be seen.\""
+    }
+  },
+  "The Fixer": {
+    name: "The Fixer",
+    pillar: "Relationships",
+    overview: "You keep stability by stepping in, solving problems, or carrying emotional weight that isn't yours. Instead of sharing your own struggles, you manage the struggles of others.",
+    firstKnowThis: "Being a \"fixer\" in relationships doesn't mean you don't trust others — it means you've learned to keep stability by stepping in, solving problems, or carrying emotional weight that isn't yours. Instead of sharing your own struggles, you manage the struggles of others. This pattern often comes from learning early that your value was in being responsible, capable, or the one who \"held things together.\" While fixing feels like love, it can leave you exhausted and prevent true mutual support.",
+    corePatterns: [
+      "Steps in to solve or manage others' problems (Q2)",
+      "Feels it's easier to manage someone else's emotions than share their own (Q11)",
+      "Feels anxious or guilty if they can't \"make things better\" for others (Q12)",
+      "Puts responsibility for harmony on themselves",
+      "Avoids vulnerability by focusing on fixing others"
+    ],
+    rootEmotions: [
+      "Fear of instability if they don't step in",
+      "Anxiety when others are struggling or in conflict",
+      "Guilt when prioritizing their own needs",
+      "Relief only when things feel \"under control\""
+    ],
+    whatThisCreates: [
+      "Relationships where one person is overly dependent on you",
+      "Emotional burnout from over-functioning",
+      "Hidden frustration or resentment when your needs go unmet",
+      "A cycle where intimacy feels one-sided: you solve, others receive"
+    ],
+    hiddenBeliefs: [
+      "\"If I don't fix it, everything will fall apart.\"",
+      "\"My worth is tied to being useful.\"",
+      "\"I can't trust others to manage their own problems.\"",
+      "\"If I'm not fixing, I'm failing.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Fixer pattern isn't about abandoning your strengths — it's about learning to step back and allow others to rise. Transformation looks like:",
+      transformationLooks: [
+        "Sharing your own struggles instead of hiding behind responsibility",
+        "Supporting without carrying",
+        "Trusting that others can handle their own emotions",
+        "Feeling free to just be in relationships, not always do"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal signals of being in Fixer mode:",
+      internalSignals: [
+        "Uneasy when others are struggling",
+        "Feeling restless until you step in to help",
+        "Anxiety when you can't solve a problem",
+        "Difficulty receiving support yourself"
+      ]
+    },
+    originStory: "This archetype often develops when, as a child or young adult, you had to play the caretaker, mediator, or \"strong one.\" Maybe you managed conflict in your home, took on too much responsibility, or learned that your needs mattered less than keeping peace. Over time, fixing became your way of staying connected — even at the cost of your own vulnerability.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You allow others to sit with their own problems without rushing to solve",
+        "You can express your own needs without guilt",
+        "You feel peace even when things are unresolved",
+        "Your relationships feel more mutual and less one-sided"
+      ]
+    },
+    uniqueStrengths: "You are resourceful, empathetic, and dependable. These qualities make you a natural stabilizer in relationships. When balanced, they allow you to support without over-functioning and create space for true partnership.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how your nervous system equates fixing with safety. This reflex developed as protection but can now be softened.",
+      practicalTools: [
+        "Journaling prompt: \"What would happen if I didn't fix this?\"",
+        "Practice pausing before offering solutions → ask instead: \"Do you want advice or just support?\"",
+        "Reflection exercise: identify one place where you can let go of responsibility this week."
+      ],
+      selfCompassion: "Affirm: \"I don't need to fix everything to be loved. My presence is enough.\""
+    }
+  },
+  "The Guarded Skeptic": {
+    name: "The Guarded Skeptic",
+    pillar: "Relationships",
+    overview: "You protect yourself by doubting closeness. You crave intimacy, but when it shows up, part of you braces for disappointment.",
+    firstKnowThis: "Being a \"guarded skeptic\" in relationships doesn't mean you don't want closeness — it means you've learned to protect yourself by doubting it. You may crave intimacy, but when it shows up, part of you braces for disappointment. This isn't stubbornness; it's protection. If you expect love to hurt or fade, then you won't be blindsided when it does. The trouble is, that shield also keeps you from fully experiencing the very closeness you long for.",
+    corePatterns: [
+      "Holds on to pain from past relationships (Q4)",
+      "Believes emotional openness leads to hurt or disappointment (Q5)",
+      "Leans on independence as both strength and shield (Q13)",
+      "Craves closeness but can't relax into it without overthinking (Q15)",
+      "Interprets affection or intimacy with suspicion"
+    ],
+    rootEmotions: [
+      "Fear of being hurt again",
+      "Anxiety around trusting others fully",
+      "Grief or anger from past betrayals that never fully healed",
+      "Comfort in self-reliance as protection"
+    ],
+    whatThisCreates: [
+      "A cycle of half-closeness: relationships that never feel fully safe",
+      "Partners who sense you're \"half in, half out\"",
+      "Loneliness despite being in a relationship",
+      "Emotional exhaustion from anticipating loss or rejection"
+    ],
+    hiddenBeliefs: [
+      "\"Love always ends in hurt.\"",
+      "\"If I let my guard down, I'll regret it.\"",
+      "\"Independence keeps me safe.\"",
+      "\"If it feels good now, the pain is just around the corner.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Guarded Skeptic pattern means rewriting the script you expect from love. Transformation looks like:",
+      transformationLooks: [
+        "Learning to trust gradually, one safe step at a time",
+        "Allowing past hurt to heal instead of predicting it will repeat",
+        "Finding strength not in walls, but in discernment",
+        "Experiencing closeness without waiting for it to collapse"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal signals of the Guarded Skeptic:",
+      internalSignals: [
+        "Feeling tense even during moments of affection",
+        "Expecting rejection or abandonment without clear reason",
+        "Doubting compliments or affection are genuine",
+        "Overthinking when closeness should feel natural"
+      ]
+    },
+    originStory: "This archetype often develops when trust was broken — through betrayal, inconsistency, or conditional love. Maybe people you counted on pulled away, or love came with strings attached. Over time, your mind learned to assume hurt as inevitable, turning skepticism into protection.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You allow yourself to lean into closeness without scanning for danger",
+        "You notice yourself relaxing in affection without constant doubt",
+        "You experience independence as freedom, not as a shield",
+        "You trust that past hurt doesn't dictate your future"
+      ]
+    },
+    uniqueStrengths: "Your skepticism is a form of discernment — you don't give your trust away lightly. That's wisdom. When balanced, it allows you to form relationships built on respect, honesty, and genuine trust.",
+    nextSteps: {
+      deeperUnderstanding: "Learn how your nervous system wires past hurt into future expectations, and why doubt feels safer than hope.",
+      practicalTools: [
+        "Journaling prompt: \"What evidence do I have that this person is trustworthy — and am I letting myself see it?\"",
+        "Practice receiving small moments of care without analyzing them",
+        "Reflection: Notice when skepticism is protection vs. when it's prevention"
+      ],
+      selfCompassion: "Affirm: \"I can honor my need for safety and still allow love to grow. Not every story has to end in hurt.\""
+    }
+  },
+  "The Balanced Partner": {
+    name: "The Balanced Partner",
+    pillar: "Relationships",
+    overview: "You've cultivated a healthy relationship with intimacy, boundaries, and mutual care. You can share your authentic self while allowing others to do the same.",
+    firstKnowThis: "Being a \"balanced partner\" means you've cultivated a healthy relationship with intimacy, boundaries, and mutual care. You're able to share your authentic self — both strengths and struggles — while allowing others to do the same. This doesn't mean your relationships are perfect or conflict-free. It means you can engage openly, navigate challenges, and maintain respect for both yourself and others. Balance isn't about never feeling resistance — it's about knowing how to move through it without losing connection.",
+    corePatterns: [
+      "Shares honestly without fear of judgment (Q16)",
+      "Receives care and support without guilt (Q17)",
+      "Sets boundaries with clarity, not fear (Q18)",
+      "Practices reciprocity: giving and receiving in equal measure",
+      "Values both closeness and independence"
+    ],
+    rootEmotions: [
+      "Confidence in your own worthiness of love",
+      "Trust that vulnerability strengthens connection",
+      "Calm in the face of relational tension",
+      "Openness to give and receive care"
+    ],
+    whatThisCreates: [
+      "Deep, authentic relationships built on mutual respect",
+      "Confidence in your ability to handle conflict without breaking trust",
+      "Stronger emotional resilience in connection",
+      "A sense of belonging that doesn't require self-sacrifice"
+    ],
+    hiddenBeliefs: [
+      "\"I can be myself and still be loved.\"",
+      "\"Boundaries protect love, they don't threaten it.\"",
+      "\"Asking for support is just as valuable as giving it.\"",
+      "\"Vulnerability creates deeper connection, not danger.\""
+    ],
+    completeTransformation: {
+      description: "Your journey isn't about fixing — it's about continuing to reinforce what works. Transformation looks like:",
+      transformationLooks: [
+        "Honoring your needs without guilt",
+        "Leaning into conflict as a path to deeper trust",
+        "Staying authentic even when it feels uncomfortable",
+        "Inspiring healthier relationships by modeling balance"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal signals of balance:",
+      internalSignals: [
+        "You feel comfortable being open without oversharing",
+        "You feel safe both leaning on others and standing alone",
+        "You trust that love can withstand challenges",
+        "You experience relationships as energizing rather than draining"
+      ]
+    },
+    originStory: "Balanced patterns often grow from doing the inner work of moving beyond resistance. Maybe you've experienced seasons of being closed off, over-giving, or fixing — and learned to recognize when those strategies no longer served you. Balance comes from integrating lessons of past resistance into a healthier, more grounded way of connecting.",
+    transformationMarkers: {
+      description: "You'll know you're continuing to grow when:",
+      healingSignals: [
+        "You can be both strong and vulnerable in the same space",
+        "You let people see you fully — flaws, strengths, and all",
+        "You notice relationships feeling lighter and more mutual",
+        "You value harmony without sacrificing authenticity"
+      ]
+    },
+    uniqueStrengths: "You bring honesty, reciprocity, and steadiness into relationships. Others feel safe with you because you've learned how to balance closeness with boundaries. This balance is a gift — both to yourself and the people around you.",
+    nextSteps: {
+      deeperUnderstanding: "Continue noticing where subtle resistance tries to creep in (slipping into fixing, guarding, or over-giving). Awareness keeps you balanced.",
+      practicalTools: [
+        "Journaling prompt: \"Where do I feel most authentic in my relationships — and how can I expand that?\"",
+        "Practice letting others meet you halfway in emotional labor",
+        "Strengthen rituals that keep you grounded: reflection, gratitude, mindful connection"
+      ],
+      selfCompassion: "Affirm: \"I am safe to be fully myself in relationships. Balance creates deeper love.\""
+    }
+  },
+  "The Over-Striver": {
+    name: "The Over-Striver",
+    pillar: "Inner Peace",
+    overview: "Achievement regulates your worth. Rest feels risky; stillness stirs anxiety.",
+    firstKnowThis: "Being an \"over-striver\" in inner peace doesn't mean you're weak-minded — it means you've tied your worth to nonstop doing. You push, achieve, and keep moving because slowing down feels unsafe. Rest brings guilt, quiet feels unproductive, and peace seems like something you must earn through accomplishment. This isn't ambition gone wrong — it's a survival pattern. If you keep striving, you feel safe from judgment or failure. But over time, it robs you of rest, presence, and the very peace you long for.",
+    corePatterns: [
+      "Feels guilty when resting or slowing down (Q5)",
+      "Believes productivity is more valuable than peace (Q10)",
+      "Fears falling behind if they pause (Q11)",
+      "Equates worth with constant achievement",
+      "Struggles to be still without planning or working"
+    ],
+    rootEmotions: [
+      "Fear of losing worth if not achieving",
+      "Anxiety when unstructured time appears",
+      "Guilt when prioritizing peace over productivity",
+      "Relief only when \"doing enough\""
+    ],
+    whatThisCreates: [
+      "Burnout and exhaustion from constant effort",
+      "Difficulty being present with self or others",
+      "Peace that feels fleeting or conditional",
+      "A cycle of overwork → collapse → restart"
+    ],
+    hiddenBeliefs: [
+      "\"My worth comes from what I achieve.\"",
+      "\"Rest is laziness.\"",
+      "\"If I stop, I'll fall behind.\"",
+      "\"Peace has to be earned, not lived.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Over-Striver means decoupling worth from achievement. Transformation looks like:",
+      transformationLooks: [
+        "Valuing stillness as much as productivity",
+        "Allowing peace without guilt",
+        "Recognizing that rest fuels achievement",
+        "Building identity around being, not just doing"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal signals of Over-Striver mode:",
+      internalSignals: [
+        "Uneasy or guilty when resting",
+        "Thinking about work during downtime",
+        "Measuring self-worth by accomplishments",
+        "Relief only when overachieving"
+      ]
+    },
+    originStory: "This archetype often develops in environments where achievement was praised, but rest or play was undervalued. You may have learned early that being productive earned love or approval, while slowing down felt unsafe. Over time, striving became your way of feeling secure.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You can rest without guilt or overthinking",
+        "You feel worthy without producing or proving",
+        "Peace feels available in the present, not just the future",
+        "Balance between effort and stillness becomes natural"
+      ]
+    },
+    uniqueStrengths: "You are ambitious, resilient, and capable of great things. When paired with self-compassion, these strengths allow you to achieve without losing presence and to live from abundance instead of pressure.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how your nervous system ties safety to doing. Learn how striving is protective but not sustainable.",
+      practicalTools: [
+        "Journaling prompt: \"What would change if I believed my worth was unconditional?\"",
+        "Practice short \"peace reps\": 5 minutes of stillness daily without distraction",
+        "Reframe rest as fuel: recovery strengthens productivity"
+      ],
+      selfCompassion: "Affirm: \"I am enough even when I am still. Peace is my birthright, not my reward.\""
+    }
+  },
+  "The Emotion Avoider": {
+    name: "The Emotion Avoider",
+    pillar: "Inner Peace",
+    overview: "Being an emotion avoider in inner peace doesn't mean you're emotionless — it means you've learned to stay busy, numb, or distracted to avoid feelings that feel uncomfortable or overwhelming.",
+    firstKnowThis: "Being an \"emotion avoider\" in inner peace doesn't mean you're emotionless — it means you've learned to stay busy, numb, or distracted to avoid feelings that feel uncomfortable or overwhelming. You may bury yourself in tasks, overcommit, or escape through food, screens, or habits to keep emotions at bay. This isn't weakness — it's a survival strategy. If you avoid feelings, you don't have to risk being flooded by them. But over time, unprocessed emotions pile up, keeping true peace out of reach.",
+    corePatterns: [
+      "Avoids slowing down because it stirs up uncomfortable emotions (Q4)",
+      "Carries regrets or guilt without facing them (Q7)",
+      "Stays busy or distracted to escape feeling (Q13)",
+      "Pushes aside inner discomfort instead of processing it",
+      "Finds \"peace\" only when numbed, not when present"
+    ],
+    rootEmotions: [
+      "Fear of being overwhelmed by unresolved feelings",
+      "Guilt or regret that feels too heavy to face",
+      "Anxiety about what will surface if stillness comes",
+      "Relief only when distracted"
+    ],
+    whatThisCreates: [
+      "Constant busyness with little true rest",
+      "Emotional weight that never fully lifts",
+      "Difficulty sitting with self in silence or stillness",
+      "A cycle of escape → temporary relief → unresolved pain"
+    ],
+    hiddenBeliefs: [
+      "\"Distraction is safer than feeling.\"",
+      "\"If I face this, it will break me.\"",
+      "\"Peace means avoiding pain.\"",
+      "\"Emotions are dangerous.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Emotion Avoider means learning to face feelings in safe, manageable ways. Transformation looks like:",
+      transformationLooks: [
+        "Allowing small doses of emotional presence",
+        "Releasing guilt and regret through processing, not suppression",
+        "Creating safe spaces to feel without overwhelm",
+        "Experiencing peace as integration, not avoidance"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal signals of Emotion Avoidance:",
+      internalSignals: [
+        "Feeling restless in silence or downtime",
+        "Keeping busy to avoid \"thinking too much\"",
+        "Numbing with food, work, or habits",
+        "Feeling uneasy when emotions start to surface"
+      ]
+    },
+    originStory: "This archetype often develops in environments where emotions felt unsafe, overwhelming, or invalidated. Maybe you learned early that showing feelings led to conflict, shame, or rejection. Over time, distraction became the safe way to cope.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You can sit in stillness without needing distraction",
+        "You let emotions pass through instead of avoiding them",
+        "You find comfort in expressing, not just suppressing",
+        "Peace feels like presence, not escape"
+      ]
+    },
+    uniqueStrengths: "You are adaptable, resilient, and capable of handling stress. When balanced with emotional openness, these strengths allow you to navigate life with both stability and depth.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how avoidance brings short-term relief but long-term heaviness. Learn how your brain confuses suppression with safety.",
+      practicalTools: [
+        "Journaling prompt: \"What emotion do I keep avoiding — and what's the smallest way I can face it?\"",
+        "Practice \"micro-moments\" of presence: pause for 1 minute and name what you feel",
+        "Create safe outlets (journaling, therapy, trusted conversations) for expression"
+      ],
+      selfCompassion: "Affirm: \"Feeling is safe. My emotions are valid, and they can move through me without breaking me.\""
+    }
+  },
+  "The Over-Thinker": {
+    name: "The Over-Thinker",
+    pillar: "Inner Peace",
+    overview: "Being an over-thinker in inner peace doesn't mean you're broken — it means your mind has been trained to live in loops of worry, replaying the past or anticipating the future.",
+    firstKnowThis: "Being an \"over-thinker\" in inner peace doesn't mean you're broken — it means your mind has been trained to live in loops of worry, replaying the past or anticipating the future. You may replay conversations, imagine worst-case scenarios, or feel restless when you try to be present. This isn't lack of focus — it's your nervous system's way of trying to protect you by staying \"ahead\" of pain. But instead of safety, overthinking steals your presence, drains your energy, and keeps peace feeling out of reach.",
+    corePatterns: [
+      "Replays past conversations or mistakes in their head (Q2)",
+      "Worries about the future instead of living in the present (Q3)",
+      "Feels anxious when outcomes are uncertain (Q8)",
+      "Finds peace but feels it's fragile and temporary (Q15)",
+      "Struggles to stay grounded in the moment"
+    ],
+    rootEmotions: [
+      "Fear of making mistakes again",
+      "Anxiety about unpredictability",
+      "Shame or regret over past choices",
+      "Relief only when trying to \"think ahead\" — which never lasts"
+    ],
+    whatThisCreates: [
+      "Restlessness and inability to stay present",
+      "Emotional exhaustion from mental spinning",
+      "Difficulty fully enjoying peaceful moments",
+      "A sense that peace always \"slips away\""
+    ],
+    hiddenBeliefs: [
+      "\"If I don't worry, things will go wrong.\"",
+      "\"I can't trust myself to just be.\"",
+      "\"Thinking harder keeps me safe.\"",
+      "\"Peace won't last.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Over-Thinker means learning to calm the mental loops and trust presence. Transformation looks like:",
+      transformationLooks: [
+        "Replacing endless \"what ifs\" with grounding in the now",
+        "Allowing peace to last without sabotaging it with worry",
+        "Learning self-trust so mistakes aren't feared",
+        "Experiencing stillness as safety, not danger"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal signals of Over-Thinking:",
+      internalSignals: [
+        "Replaying scenarios long after they're over",
+        "Feeling uneasy in calm moments",
+        "Jumping ahead to future worries instead of enjoying today",
+        "Relief only when \"planning\" — which never satisfies"
+      ]
+    },
+    originStory: "This archetype often develops when safety felt uncertain. Maybe mistakes were punished, or unpredictability brought pain. Over time, your system decided that constant vigilance — thinking ahead, analyzing, replaying — was the only way to stay safe.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You can catch yourself in loops and gently redirect",
+        "You let calm moments last without sabotaging them",
+        "You forgive past mistakes and release regret",
+        "You feel safe being present without \"preparing\""
+      ]
+    },
+    uniqueStrengths: "You are thoughtful, reflective, and analytical. These are incredible strengths when balanced. With presence, they allow you to make wise choices without being hijacked by endless mental spinning.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how overthinking feels like control but creates chaos. Learn how your brain confuses vigilance with safety.",
+      practicalTools: [
+        "Journaling prompt: \"What's one thing I can't stop replaying — and what does it cost me?\"",
+        "Practice grounding techniques: focus on breath, body, or surroundings",
+        "Set \"worry windows\": give your mind a set time to worry, then release it"
+      ],
+      selfCompassion: "Affirm: \"I can let peace last. I am safe in the present moment.\""
+    }
+  },
+  "The Peace Pleaser": {
+    name: "The Peace Pleaser",
+    pillar: "Inner Peace",
+    overview: "Being a peace pleaser in inner peace doesn't mean you're weak — it means you've learned to keep external harmony by silencing your own needs. You avoid conflict, smooth over tension, and sacrifice your voice because discomfort feels dangerous.",
+    firstKnowThis: "Being a \"peace pleaser\" in inner peace doesn't mean you're weak — it means you've learned to keep external harmony by silencing your own needs. You avoid conflict, smooth over tension, and sacrifice your voice because discomfort feels dangerous. This isn't about being kind — it's about survival. If others stay calm, you feel safe. But over time, keeping the peace outside leaves turmoil inside, blocking the deeper sense of peace you long for.",
+    corePatterns: [
+      "Tries to control outcomes to avoid conflict (Q6)",
+      "Struggles to forgive self or others, even when wanting peace (Q9)",
+      "Believes peace is only possible when everything is perfect (Q12)",
+      "Calms others more easily than themselves (Q14)",
+      "Avoids expressing needs to keep others happy"
+    ],
+    rootEmotions: [
+      "Fear of rejection or conflict",
+      "Anxiety about losing harmony or connection",
+      "Guilt for \"rocking the boat\"",
+      "Relief only when everyone else is calm"
+    ],
+    whatThisCreates: [
+      "Surface-level peace at the expense of authenticity",
+      "Suppressed emotions that create resentment or burnout",
+      "Relationships that lack depth due to silence",
+      "A fragile sense of inner calm dependent on others' moods"
+    ],
+    hiddenBeliefs: [
+      "\"Other people's needs matter more than mine.\"",
+      "\"Conflict destroys connection.\"",
+      "\"Peace depends on me keeping things smooth.\"",
+      "\"If I speak up, I'll lose love.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Peace Pleaser means learning that true peace includes your needs too. Transformation looks like:",
+      transformationLooks: [
+        "Expressing emotions without fear of losing connection",
+        "Allowing conflict as a path to deeper trust",
+        "Practicing forgiveness for yourself and others",
+        "Experiencing peace as authenticity, not silence"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal signals of Peace Pleasing:",
+      internalSignals: [
+        "Feeling uneasy when others are upset",
+        "Holding back opinions to \"keep the peace\"",
+        "Suppressing emotions to avoid conflict",
+        "Feeling calm only when everyone else is happy"
+      ]
+    },
+    originStory: "This archetype often develops in environments where conflict felt unsafe or rejection followed disagreement. You may have learned early that pleasing others was the only way to keep harmony. Over time, you equated peace with silence and self-sacrifice.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You can express needs calmly without fear",
+        "You feel safe in relationships even when conflict arises",
+        "You release resentment by honoring your own truth",
+        "Peace feels steady because it includes you, not just others"
+      ]
+    },
+    uniqueStrengths: "You are empathetic, sensitive, and gifted at creating harmony. When balanced with self-expression, these strengths allow you to foster authentic connection and real, lasting peace.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how your nervous system equates calmness with safety. Learn how real peace includes your emotions too.",
+      practicalTools: [
+        "Journaling prompt: \"Where am I keeping peace at my own expense?\"",
+        "Practice voicing one small need daily, without over-explaining",
+        "Reframe conflict as collaboration instead of danger"
+      ],
+      selfCompassion: "Affirm: \"My voice matters. Real peace includes me.\""
+    }
+  },
+  "The Guarded Soul": {
+    name: "The Guarded Soul",
+    pillar: "Inner Peace",
+    overview: "Being a guarded soul doesn't mean you don't want peace — it means you've learned to protect yourself by shutting down. You may struggle to relax, resist letting emotions surface, or feel like calm is impossible because being open feels unsafe.",
+    firstKnowThis: "Being a \"guarded soul\" doesn't mean you don't want peace — it means you've learned to protect yourself by shutting down. You may struggle to relax, resist letting emotions surface, or feel like calm is impossible because being open feels unsafe. This isn't stubbornness — it's self-protection. If you don't let your guard down, you can't be hurt. But over time, the walls that shield you from pain also keep out peace, connection, and freedom.",
+    corePatterns: [
+      "Feels like their mind rarely feels quiet or still (Q1)",
+      "Tries to control outcomes instead of trusting (Q6)",
+      "Distracts themselves instead of processing emotions (Q13)",
+      "Struggles to relax even when circumstances are safe",
+      "Views vulnerability as a threat to stability"
+    ],
+    rootEmotions: [
+      "Fear of being hurt if they soften",
+      "Anxiety when not in control",
+      "Distrust in the safety of stillness",
+      "Relief only when staying closed or busy"
+    ],
+    whatThisCreates: [
+      "Constant mental and emotional tension",
+      "Difficulty experiencing rest or presence",
+      "Isolation behind protective walls",
+      "A sense that peace is out of reach, no matter the effort"
+    ],
+    hiddenBeliefs: [
+      "\"I can't calm down.\"",
+      "\"If I stay guarded, I'll stay safe.\"",
+      "\"Trusting life will only lead to disappointment.\"",
+      "\"Letting go is dangerous.\""
+    ],
+    completeTransformation: {
+      description: "Healing the Guarded Soul means learning that peace comes not from control, but from release. Transformation looks like:",
+      transformationLooks: [
+        "Allowing small moments of openness without fear",
+        "Building trust that stillness is safe",
+        "Releasing control to experience calm",
+        "Finding strength in vulnerability, not just walls"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal signals of being a Guarded Soul:",
+      internalSignals: [
+        "Feeling restless even in quiet settings",
+        "Tensing against stillness or silence",
+        "Keeping emotions tightly contained",
+        "Feeling safer behind \"walls\" than open to peace"
+      ]
+    },
+    originStory: "This archetype often develops when vulnerability once led to hurt, betrayal, or chaos. You may have learned early that softening wasn't safe, so you built strength through control and protection. Over time, guarding became your default way of surviving.",
+    transformationMarkers: {
+      description: "You'll know you're healing when:",
+      healingSignals: [
+        "You allow stillness without bracing for danger",
+        "You feel safe showing emotion without shame",
+        "You relax without needing to control everything",
+        "Peace feels possible, not out of reach"
+      ]
+    },
+    uniqueStrengths: "You are strong, discerning, and deeply self-protective. When balanced with openness, these strengths allow you to create both safety and connection — a foundation for true, lasting peace.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how your nervous system equates control with safety. Learn how letting go can expand peace instead of risking it.",
+      practicalTools: [
+        "Journaling prompt: \"What would happen if I let myself relax for 5 minutes today?\"",
+        "Practice \"micro-openness\": sharing one small truth or feeling safely",
+        "Grounding exercises that teach the body safety in stillness"
+      ],
+      selfCompassion: "Affirm: \"I can soften without breaking. Peace grows when I allow it.\""
+    }
+  },
+  "The Centered Seeker": {
+    name: "The Centered Seeker",
+    pillar: "Inner Peace",
+    overview: "Being a centered seeker doesn't mean you never feel stress — it means you've learned how to return to balance when life gets noisy. You trust stillness, embrace emotions instead of avoiding them, and allow peace to come from within rather than external conditions.",
+    firstKnowThis: "Being a \"centered seeker\" doesn't mean you never feel stress — it means you've learned how to return to balance when life gets noisy. You trust stillness, embrace emotions instead of avoiding them, and allow peace to come from within rather than external conditions. This doesn't mean your mind is always quiet. It means you have the tools, awareness, and self-compassion to notice resistance without being consumed by it. You seek peace not by controlling life, but by centering yourself in the middle of it.",
+    corePatterns: [
+      "Balances effort with rest, striving with surrender",
+      "Processes emotions instead of avoiding them",
+      "Lives more in the present than in the past or future",
+      "Maintains calm even when uncertainty arises",
+      "Welcomes vulnerability as part of peace"
+    ],
+    rootEmotions: [
+      "Confidence in your ability to self-regulate",
+      "Calm acceptance of imperfection",
+      "Gratitude for what is, not just what's missing",
+      "Trust in life's unfolding"
+    ],
+    whatThisCreates: [
+      "A steady sense of inner calm",
+      "Resilience through stress or conflict",
+      "Freedom from cycles of avoidance, overthinking, or striving",
+      "A deeper connection to yourself and others"
+    ],
+    hiddenBeliefs: [
+      "\"Peace is always available to me.\"",
+      "\"I can handle discomfort without losing myself.\"",
+      "\"Rest and stillness are powerful.\"",
+      "\"My worth isn't tied to doing — it just is.\""
+    ],
+    completeTransformation: {
+      description: "Your journey isn't about fixing — it's about reinforcing what works. Transformation looks like:",
+      transformationLooks: [
+        "Expanding practices that keep you grounded",
+        "Staying mindful when old resistance patterns whisper back",
+        "Letting peace become your default state, not a temporary escape",
+        "Using your centeredness to uplift others around you"
+      ]
+    },
+    recognizePattern: {
+      description: "Internal signals of balance:",
+      internalSignals: [
+        "You feel comfortable in stillness and presence",
+        "You allow emotions to move through without avoidance",
+        "You can rest without guilt or fear of falling behind",
+        "You trust that peace is resilient, not fragile"
+      ]
+    },
+    originStory: "This archetype often develops through practice — facing resistance in the past, experimenting with tools like mindfulness, forgiveness, or self-awareness, and realizing that peace doesn't require perfection. You've integrated lessons from struggle into a centered way of living.",
+    transformationMarkers: {
+      description: "You'll know you're deepening balance when:",
+      healingSignals: [
+        "You hold peace even during chaos",
+        "You move through emotions with compassion, not avoidance",
+        "You live in the present more easily than the past or future",
+        "Others feel calm simply by being around you"
+      ]
+    },
+    uniqueStrengths: "You are resilient, mindful, and compassionate. These strengths allow you not only to cultivate peace for yourself but also to model and share it with others. Your centeredness is both a gift to you and to the world.",
+    nextSteps: {
+      deeperUnderstanding: "Notice how your peace impacts not only you but those around you. See how inner calm radiates outward.",
+      practicalTools: [
+        "Journaling prompt: \"What practices bring me back to center the fastest?\"",
+        "Regular grounding rituals: meditation, breathwork, reflection",
+        "Expand balance into other pillars — carry your centeredness into health, finances, and relationships"
+      ],
+      selfCompassion: "Affirm: \"Peace is my natural state. I can return to it again and again.\""
+    }
+  }
+};
+
+// Concise Content for Secondary/Other Pillar Patterns - Brief insights only
+const SECONDARY_ARCHETYPE_CONTENT = {
+
+  "The Scarcity Survivor": {
+    name: "The Scarcity Survivor", 
+    overview: "You scan for loss even when you have enough. Vigilance built safety; now it starves joy and growth.",
+    keyPattern: "Check accounts repeatedly",
+    impact: "Chronic worry; stalled growth"
+  },
+  "The All-or-Nothing Perfectionist": {
+    name: "The All-or-Nothing Perfectionist",
+    overview: "Perfection or pause. Big pushes prove worth; slips trigger shutdown.",
+    keyPattern: "Intense starts, sharp stops",
+    impact: "Yo-yo cycles"
+  },
+  "The Self-Neglecting Caregiver": {
+    name: "The Self-Neglecting Caregiver",
+    overview: "You pour out for others and postpone your own care. Love equals self-sacrifice.",
+    keyPattern: "Skip sleep/meals for someone else",
+    impact: "Depletion; resentment"
+  },
+  "The Closed Off": {
+    name: "The Closed Off",
+    overview: "You want closeness, but a well-built guard keeps people at arm's length.",
+    keyPattern: "Share facts, not feelings; keep it surface-level",
+    impact: "Flat dates / stalled depth"
+  },
+  "The Over-Giver": {
+    name: "The Over-Giver",
+    overview: "You earn safety by giving more than you receive. Care keeps you connected, but over-giving hides your needs.",
+    keyPattern: "Anticipate needs; minimize your own",
+    impact: "One-sided bonds; emotional fatigue"
+  },
+  "The Fixer": {
+    name: "The Fixer",
+    overview: "Solving becomes love. You manage, advise, and rescue to feel useful.",
+    keyPattern: "Offer solutions instead of presence",
+    impact: "Partner feels parented or pressured"
+  }
+};
+
+// REMOVED: All hardcoded generic archetypes - using only authentic Phase 2 calculation results
+
+export default function SuccessFormulaResultsNew() {
+  const [results, setResults] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
+  const [accuracyRating, setAccuracyRating] = useState<number>(0);
+  const [valuableInsight, setValuableInsight] = useState<string>("");
+  const { user } = useSimpleAuth();
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Feedback submission function
+  const submitFeedback = async () => {
+    if (!user || accuracyRating === 0) return;
+    
+    setFeedbackLoading(true);
+    try {
+      const response = await fetch('/api/assessment-feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          assessmentId: results?.id || 'success-formula-generic',
+          assessmentType: 'success-formula',
+          accuracyRating,
+          valuableInsight: valuableInsight.trim() || null
+        })
+      });
+
+      if (response.ok) {
+        setFeedbackSubmitted(true);
+        console.log('Feedback submitted successfully');
+      } else {
+        console.error('Failed to submit feedback:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+    } finally {
+      setFeedbackLoading(false);
+    }
+  };
+
+  // PDF Download Function
+  const downloadPDF = async () => {
+    if (!contentRef.current) return;
+    
+    try {
+      const canvas = await html2canvas(contentRef.current, {
+        scale: 2.0,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: contentRef.current.scrollWidth,
+        height: contentRef.current.scrollHeight
+      });
+      
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const margin = 10;
+      const printableWidth = pdfWidth - (margin * 2);
+      const printableHeight = pdfHeight - (margin * 2);
+      
+      const imgAspectRatio = canvas.width / canvas.height;
+      const printWidth = printableWidth;
+      const printHeight = printWidth / imgAspectRatio;
+      
+      if (printHeight <= printableHeight) {
+        pdf.addImage(imgData, 'JPEG', margin, margin, printWidth, printHeight);
+      } else {
+        const pagesNeeded = Math.ceil(printHeight / printableHeight);
+        const sectionHeight = canvas.height / pagesNeeded;
+        
+        for (let page = 0; page < pagesNeeded; page++) {
+          if (page > 0) {
+            pdf.addPage();
+          }
+          
+          const sectionCanvas = document.createElement('canvas');
+          const sectionCtx = sectionCanvas.getContext('2d');
+          sectionCanvas.width = canvas.width;
+          sectionCanvas.height = sectionHeight;
+          
+          sectionCtx?.drawImage(
+            canvas,
+            0, page * sectionHeight,
+            canvas.width, sectionHeight,
+            0, 0,
+            canvas.width, sectionHeight
+          );
+          
+          const sectionImgData = sectionCanvas.toDataURL('image/jpeg', 0.98);
+          const sectionPrintHeight = printableHeight;
+          
+          pdf.addImage(sectionImgData, 'JPEG', margin, margin, printWidth, sectionPrintHeight);
+        }
+      }
+      
+      const fileName = `Success_Formula_Assessment_Results.pdf`;
+      pdf.save(fileName);
+      
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchResults = async () => {
+      try {
+        const response = await fetch('/api/quiz/results', {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          setResults(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching results:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResults();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading your results...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!results) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <Card className="max-w-md">
+          <CardContent className="p-6 text-center">
+            <AlertTriangle className="h-12 w-12 text-blue-500 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold mb-2">No Results Found</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              We couldn't find your assessment results. Please take the quiz first.
+            </p>
+            <Button asChild>
+              <Link href="/enhanced-success-formula-quiz">Take Assessment</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Calculate pillar scores
+  const pillarScores = {
+    relationships: Math.round(((results.results?.relationshipsScore || 0) / 25) * 100),
+    health: Math.round(((results.results?.healthScore || 0) / 25) * 100),
+    finances: Math.round(((results.results?.financesScore || 0) / 25) * 100),
+    innerPeace: Math.round(((results.results?.innerPeaceScore || 0) / 25) * 100)
+  };
+
+  // Calculate average resistance
+  const calculatedResistance = Math.round((pillarScores.relationships + pillarScores.health + pillarScores.finances + pillarScores.innerPeace) / 4);
+  const resistance = results.results?.resistancePercentage || calculatedResistance;
+
+  // Get resistance display properties
+  const getResistanceDisplay = (percentage: number) => {
+    if (percentage >= 80) return { emoji: "🔥", level: "Very High", color: "text-red-700", bgColor: "bg-red-50", borderColor: "border-red-200" };
+    if (percentage >= 60) return { emoji: "⚠️", level: "High", color: "text-red-600", bgColor: "bg-red-50", borderColor: "border-red-200" };
+    if (percentage >= 40) return { emoji: "🟡", level: "Medium", color: "text-blue-600", bgColor: "bg-blue-50", borderColor: "border-blue-200" };
+    if (percentage >= 20) return { emoji: "🟢", level: "Low", color: "text-blue-600", bgColor: "bg-blue-50", borderColor: "border-blue-200" };
+    return { emoji: "✨", level: "Very Low", color: "text-blue-600", bgColor: "bg-blue-50", borderColor: "border-blue-200" };
+  };
+
+  const resistanceDisplay = getResistanceDisplay(resistance);
+
+  // Sort pillars by resistance score
+  const sortedPillars = [
+    { name: 'Health', key: 'health', score: pillarScores.health, rawScore: results.results?.healthScore || 0, icon: Activity, color: { bg: "bg-blue-100", border: "border-blue-200", text: "text-blue-600" } },
+    { name: 'Inner Peace', key: 'innerPeace', score: pillarScores.innerPeace, rawScore: results.results?.innerPeaceScore || 0, icon: Brain, color: { bg: "bg-purple-100", border: "border-purple-200", text: "text-purple-600" } },
+    { name: 'Finances', key: 'finances', score: pillarScores.finances, rawScore: results.results?.financesScore || 0, icon: DollarSign, color: { bg: "bg-blue-100", border: "border-blue-200", text: "text-blue-600" } },
+    { name: 'Relationships', key: 'relationships', score: pillarScores.relationships, rawScore: results.results?.relationshipsScore || 0, icon: Heart, color: { bg: "bg-pink-100", border: "border-pink-200", text: "text-pink-600" } }
+  ].sort((a, b) => b.score - a.score);
+
+  const primaryPillar = sortedPillars[0];
+  const secondaryPillars = sortedPillars.slice(1);
+
+  // Get resistance level based on raw scores (0-25 scale)
+  const getResistanceLevel = (rawScore: number): 'high' | 'medium' | 'low' => {
+    if (rawScore >= 18) return 'high';  // 18-25 = High
+    if (rawScore >= 9) return 'medium'; // 9-17 = Moderate  
+    return 'low';                       // 0-8 = Low
+  };
+
+  const primaryResistanceLevel = getResistanceLevel(primaryPillar.rawScore);
+  
+  // USE THE ACTUAL DATABASE RESULT - NOT HARDCODED LOGIC
+  const getCurrentArchetype = () => {
+    const dominantPattern = results.results?.dominantPattern;
+    
+    // Return enhanced content for primary/dominant pattern
+    if (dominantPattern && PRIMARY_ARCHETYPE_CONTENT[dominantPattern as keyof typeof PRIMARY_ARCHETYPE_CONTENT]) {
+      return PRIMARY_ARCHETYPE_CONTENT[dominantPattern as keyof typeof PRIMARY_ARCHETYPE_CONTENT];
+    }
+    
+    // If archetype exists but content not yet mapped, show minimal authentic info
+    if (dominantPattern && dominantPattern !== 'PROCESSING COMPLETE PHASE 2 DATA') {
+      return {
+        name: dominantPattern,
+        intro: `Your assessment identifies you as "${dominantPattern}" based on your Phase 2 responses. This archetype represents your primary resistance pattern in the area where you scored highest.`,
+        corePatterns: [
+          "Specific behavioral patterns based on your responses",
+          "Resistance tendencies that emerge under pressure"
+        ],
+        rootEmotions: [
+          "Core emotional drivers identified in your assessment",
+          "Underlying patterns revealed through your responses"
+        ],
+        hiddenBeliefs: [
+          "Belief patterns detected through your Phase 2 answers"
+        ],
+        impacts: [
+          "How this archetype affects your daily experience",
+          "Areas where this resistance pattern creates challenges"
+        ]
+      };
+    }
+    
+    // If we have incomplete Phase 2 data, show that processing is needed
+    if (dominantPattern === 'PROCESSING COMPLETE PHASE 2 DATA') {
+      return {
+        name: "Processing Complete Assessment",
+        intro: "Your Phase 2 assessment data is being processed. Complete archetype analysis requires all 73 Phase 2 questions to provide accurate pattern identification.",
+        corePatterns: [
+          "Assessment incomplete - missing Phase 2 questions",
+          "Accurate archetype requires complete 73-question dataset",
+          "Currently showing Phase 1 results only",
+          "Complete Phase 2 data needed for precise archetype detection"
+        ],
+        rootEmotions: ["Assessment in progress", "Data analysis pending"],
+        hiddenBeliefs: ["Complete data needed for accurate analysis", "Phase 2 reveals deeper patterns"],
+        impacts: ["Temporary results until full assessment complete", "Accurate archetype identification pending"]
+      };
+    }
+    
+    // Fallback for incomplete assessment data
+    return {
+      name: "Assessment Incomplete",
+      intro: "Unable to determine primary archetype due to incomplete assessment data. Complete Phase 2 assessment required for accurate archetype identification.",
+      corePatterns: ["Assessment data incomplete"],
+      rootEmotions: ["Data processing needed"],
+      hiddenBeliefs: ["Complete assessment required"],
+      impacts: ["Accurate results pending complete data"]
+    };
+  };
+  
+  const primaryArchetype = getCurrentArchetype();
+
+  return (
+    <div>
+      <SEOHead 
+        title="Your Success Formula Results"
+        description="Discover your hidden resistance patterns that may be limiting your growth across Relationships, Health, Finances, and Inner Peace."
+      />
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+
+
+        <div className="container mx-auto px-4 py-8">
+          {/* PDF Download */}
+          <div className="flex justify-end mb-8">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={downloadPDF}
+              className="text-gray-600 border-gray-300 hover:bg-gray-50"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Download PDF
+            </Button>
+          </div>
+
+          <div ref={contentRef} className="space-y-8">
+            
+            {/* SUCCESS FORMULA RESULTS SECTION */}
+            <div className="space-y-8">
+              <div className="text-center space-y-4">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Success Formula Results</h2>
+                <div className="mt-4 space-y-2">
+                  <p className="text-gray-700 dark:text-gray-300">
+                    Your highest resistance area is <strong>{primaryPillar.name}</strong> at {primaryPillar.score}%, followed by {secondaryPillars[0].name} at {secondaryPillars[0].score}%.
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Your overall resistance score is {resistance}% ({resistanceDisplay.level}), indicating areas where emotional patterns may be blocking your success.
+                  </p>
+                </div>
+              </div>
+
+              {/* Overall Resistance Score */}
+              <Card className={`border-l-4 ${resistanceDisplay.borderColor.replace('border-', 'border-l-')}`}>
+                <CardHeader>
+                  <CardTitle className="flex flex-col items-center text-center gap-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{resistanceDisplay.emoji}</span>
+                      <span className="text-2xl font-bold">Overall Resistance: {resistance}%</span>
+                      <Badge className={`${resistanceDisplay.bgColor} ${resistanceDisplay.color} ${resistanceDisplay.borderColor} font-medium`}>
+                        {resistanceDisplay.level} Resistance
+                      </Badge>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <h4 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">What does "Resistance" measure?</h4>
+                      <p className="text-sm text-blue-600 dark:text-blue-400">
+                        {SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.overallResistance.explanation.description}
+                      </p>
+                    </div>
+                    <Progress value={resistance} className="h-3" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Patterns Section */}
+              <Card className="border-l-4 border-l-blue-400">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    <span className="text-2xl">{SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.patternsSection.icon}</span>
+                    <span className="text-xl font-bold">{SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.patternsSection.title}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.patternsSection.description}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Emotions Section */}
+              <Card className="border-l-4 border-l-purple-400">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    <span className="text-2xl">{SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.emotionsSection.icon}</span>
+                    <span className="text-xl font-bold">{SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.emotionsSection.title}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.emotionsSection.description}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Beliefs Section */}
+              <Card className="border-l-4 border-l-blue-400">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    <span className="text-2xl">{SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.beliefsSection.icon}</span>
+                    <span className="text-xl font-bold">{SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.beliefsSection.title}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.beliefsSection.description}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Why It Matters Section */}
+              <Card className="border-l-4 border-l-blue-400">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    <span className="text-2xl">{SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.whyItMatters.icon}</span>
+                    <span className="text-xl font-bold">{SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.whyItMatters.title}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.whyItMatters.description}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Four Pillars Performance */}
+              <Card className="mb-8">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-6 w-6" />
+                    {SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.pillars.title}
+                  </CardTitle>
+                  <CardDescription className="space-y-3">
+                    <p>{SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.pillars.subtitle}</p>
+                    
+                    <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800 text-sm">
+                      <p className="text-blue-700 dark:text-blue-300">
+                        {SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.pillars.note}
+                      </p>
+                    </div>
+
+                    <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border text-sm">
+                      <p className="text-gray-700 dark:text-gray-300">
+                        <strong>{SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.pillars.scoreGuide.title}</strong> {SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.pillars.scoreGuide.description} <span className="inline-block bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs ml-1">{SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.pillars.scoreGuide.levels.low}</span> · <span className="inline-block bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">{SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.pillars.scoreGuide.levels.moderate}</span> · <span className="inline-block bg-red-100 text-red-700 px-2 py-1 rounded text-xs">{SUCCESS_FORMULA_PHASE1_ONLY_TEMPLATE.pillars.scoreGuide.levels.high}</span>
+                      </p>
+                    </div>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {sortedPillars.map((pillar) => {
+                      const IconComponent = pillar.icon;
+                      const resistanceLevel = getResistanceLevel(pillar.rawScore);
+                      return (
+                        <div key={pillar.key} className={`p-4 rounded-lg border ${pillar.color.bg} ${pillar.color.border}`}>
+                          <div className="flex items-center gap-3 mb-3">
+                            <IconComponent className={`h-6 w-6 ${pillar.color.text}`} />
+                            <span className="font-semibold">{pillar.name}</span>
+                          </div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-2xl font-bold">{pillar.score}%</span>
+                            <Badge 
+                              variant="outline" 
+                              className={`text-xs font-medium px-2 py-1 ${
+                                resistanceLevel === 'high' ? 'bg-red-50 text-red-700 border-red-200' : 
+                                resistanceLevel === 'medium' ? 'bg-blue-50 text-blue-700 border-blue-200' : 
+                                'bg-blue-50 text-blue-700 border-blue-200'
+                              }`}
+                            >
+                              {resistanceLevel === 'high' ? 'High' : 
+                               resistanceLevel === 'medium' ? 'Moderate' : 
+                               'Low'}
+                            </Badge>
+                          </div>
+                          <Progress value={pillar.score} className="h-2" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+
+
+
+            </div>
+
+            {/* PHASE 2 RESULTS SECTION */}
+            <div data-phase="2" className="space-y-8 border-t-4 border-blue-400 pt-8">
+              <div className="text-center space-y-4">
+                <h2 className="text-3xl font-bold text-blue-600 mb-2">Archetype Analysis</h2>
+                <p className="text-gray-600 dark:text-gray-400 max-w-4xl mx-auto leading-relaxed">
+                  Archetype Analysis names your protector pattern in {primaryPillar.name}—a shorthand for the habits, emotions, and beliefs your nervous system uses to feel safe. It isn't a box or diagnosis; it's a clear map of what shows up and why, so you can soften the pattern and restore ease. We focus on removing resistance, not adding more to do.
+                </p>
+              </div>
+
+                {/* 5. Primary Archetype Analysis */}
+                <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+                  <CardHeader>
+                    <div className="text-center">
+                      <h3 className="text-3xl font-bold text-blue-600 mb-2">{primaryArchetype.name}</h3>
+                      <Badge className="bg-blue-100 text-blue-700 border-blue-300">
+                        Primary Pattern • {primaryPillar.name} Focus
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-700 text-center leading-relaxed mb-6">
+                      {primaryArchetype.firstKnowThis || primaryArchetype.intro || primaryArchetype.overview}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* 6. Primary Archetype Deep Dive */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        🎯 <span>Core Patterns</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2">
+                        {primaryArchetype.corePatterns.map((pattern: string, index: number) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm">{pattern}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        🔍 <span>Root Emotions</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2">
+                        {primaryArchetype.rootEmotions.map((emotion: string, index: number) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm">{emotion}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        🚫 <span>Hidden Beliefs</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2">
+                        {primaryArchetype.hiddenBeliefs.map((belief: string, index: number) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm italic">{belief}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        ⚡ <span>What This Creates</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2">
+                        {(primaryArchetype.whatThisCreates || primaryArchetype.impacts)?.map((impact: string, index: number) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm">{impact}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Enhanced Transformation Journey Sections */}
+                {primaryArchetype.completeTransformation && (
+                  <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        ✨ <span>Complete Transformation Journey</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <p className="text-gray-700 leading-relaxed">
+                        {primaryArchetype.completeTransformation.description}
+                      </p>
+                      <ul className="space-y-2">
+                        {primaryArchetype.completeTransformation.transformationLooks.map((outcome: string, index: number) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm">{outcome}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Recognition and Origin Story */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  {primaryArchetype.recognizePattern && (
+                    <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          👁️ <span>How to Recognize This Pattern</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          {primaryArchetype.recognizePattern.description}
+                        </p>
+                        <ul className="space-y-2">
+                          {primaryArchetype.recognizePattern.internalSignals.map((signal: string, index: number) => (
+                            <li key={index} className="flex items-start gap-3">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                              <span className="text-sm">{signal}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {primaryArchetype.originStory && (
+                    <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          🌱 <span>Origin Story</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          {primaryArchetype.originStory}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+
+                {/* Transformation Markers and Strengths */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  {primaryArchetype.transformationMarkers && (
+                    <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          🌟 <span>What Transformation Looks Like</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          {primaryArchetype.transformationMarkers.description}
+                        </p>
+                        <ul className="space-y-2">
+                          {primaryArchetype.transformationMarkers.healingSignals.map((signal: string, index: number) => (
+                            <li key={index} className="flex items-start gap-3">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                              <span className="text-sm">{signal}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {primaryArchetype.uniqueStrengths && (
+                    <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          💝 <span>Unique Strengths</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          {primaryArchetype.uniqueStrengths}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+
+                {/* Next Steps */}
+                {primaryArchetype.nextSteps && (
+                  <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        🛠️ <span>Your Next Steps</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div>
+                        <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                          🔍 <span>Deeper Understanding</span>
+                        </h4>
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          {primaryArchetype.nextSteps.deeperUnderstanding}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                          🛠️ <span>Practical Tools</span>
+                        </h4>
+                        <ul className="space-y-2">
+                          {primaryArchetype.nextSteps.practicalTools.map((tool: string, index: number) => (
+                            <li key={index} className="flex items-start gap-3">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                              <span className="text-sm">{tool}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                          💝 <span>Self-Compassion</span>
+                        </h4>
+                        <p className="text-gray-700 text-sm leading-relaxed italic bg-blue-100 p-3 rounded-lg">
+                          {primaryArchetype.nextSteps.selfCompassion}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+
+
+
+                {/* Phase 2 Results: Other Pillar Patterns */}
+                {results.results?.hasPhase2Data && results.results?.otherPillarPatterns && (
+                  <Card className="bg-white border border-gray-200">
+                    <CardHeader>
+                      <CardTitle className="text-gray-800 flex items-center gap-2">
+                        <BarChart3 className="h-6 w-6" />
+                        Other Pillar Patterns
+                      </CardTitle>
+                      <CardDescription>
+                        Quick insights into your patterns across other life areas
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {results.results.otherPillarPatterns.map((pillar: any, index: number) => {
+                        const pillarIconMap: Record<string, any> = {
+                          'Relationships': Heart,
+                          'Health': Activity,
+                          'Finances': DollarSign,
+                          'Inner Peace': Brain
+                        };
+                        const pillarColorMap: Record<string, string> = {
+                          'Relationships': 'bg-pink-500',
+                          'Health': 'bg-blue-500',
+                          'Finances': 'bg-blue-500',
+                          'Inner Peace': 'bg-purple-500'
+                        };
+                        const PillarIcon = pillarIconMap[pillar.pillar];
+                        const pillarColor = pillarColorMap[pillar.pillar] || 'bg-gray-500';
+                        
+                        // Get concise content for secondary patterns
+                        const secondaryContent = SECONDARY_ARCHETYPE_CONTENT[pillar.name as keyof typeof SECONDARY_ARCHETYPE_CONTENT];
+                        
+                        return (
+                          <div key={index} className="flex gap-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                            <div className={`p-2 rounded-lg ${pillarColor}`}>
+                              {PillarIcon && <PillarIcon className="h-5 w-5 text-white" />}
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="font-medium text-gray-800 mb-1">
+                                {pillar.pillar} - {pillar.name}
+                              </h4>
+                              
+                              {secondaryContent ? (
+                                <div className="space-y-2 text-sm text-gray-600">
+                                  <p className="italic">{secondaryContent.overview}</p>
+                                  <div className="flex gap-4">
+                                    <div className="flex-1">
+                                      <span className="font-medium text-xs text-gray-500">KEY PATTERN:</span>
+                                      <p className="text-xs">{secondaryContent.keyPattern}</p>
+                                    </div>
+                                    <div className="flex-1">
+                                      <span className="font-medium text-xs text-gray-500">IMPACT:</span>
+                                      <p className="text-xs">{secondaryContent.impact}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="space-y-1 text-sm text-gray-600">
+                                  <p className="text-xs italic">Secondary pattern identified in {pillar.pillar.toLowerCase()} pillar</p>
+                                  <div className="text-xs">
+                                    <span className="font-medium">Key Impact:</span> {pillar.impact?.[0] || 'Pattern-specific resistance in this area'}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Primary Archetype Display for Phase 2 */}
+                {results.results?.hasPhase2Data && results.results?.primaryArchetype && (
+                  <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <CardTitle className="text-blue-800 flex items-center gap-2">
+                            <Target className="h-6 w-6" />
+                            Primary Archetype Analysis
+                          </CardTitle>
+                          <Badge variant="secondary" className="mt-2 bg-blue-200 text-blue-800">
+                            Primary Pattern • {results.results.primaryArchetype.pillar} Focus
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div>
+                        <h3 className="text-xl font-semibold text-blue-900 mb-3">
+                          {results.results.primaryArchetype.name}
+                        </h3>
+                        <p className="text-gray-700 leading-relaxed">
+                          Archetype Analysis names your protector pattern in {results.results.primaryArchetype.pillar}—a shorthand for the habits, emotions, and beliefs your nervous system uses to feel safe. It isn't a box or diagnosis; it's a clear map of what shows up and why, so you can soften the pattern and restore ease.
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* 9. Next Level Assessment CTA */}
+                {!results.results?.hasPhase2Data && (
+                  <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
+                    <CardHeader>
+                      <CardTitle className="text-center text-blue-700">
+                        Your Next Step: Explore the Bigger Picture
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-center space-y-4">
+                      <p className="text-gray-700">
+                        This archetype is one part of your resistance story. But resistance rarely shows up in just one area — it touches your relationships, health, finances, and inner peace.
+                      </p>
+                      <div className="space-y-3">
+                        <div className="text-sm text-gray-600">
+                          <p>Build your complete blueprint → understand how resistance adds up, and where freedom begins</p>
+                        </div>
+                        <Button 
+                          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-3"
+                          asChild
+                        >
+                          <Link href={`/${primaryPillar.key === 'innerPeace' ? 'inner-peace' : primaryPillar.key}-quiz`}>
+                            Build My Blueprint
+                          </Link>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Feedback Section - Moved to end */}
+                {user && !feedbackSubmitted && (
+                  <Card className="bg-blue-50 border-blue-200">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-blue-700">
+                        <MessageSquare className="h-5 w-5" />
+                        Help us improve your experience
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                            
+                            <div className="space-y-3">
+                              <div>
+                                <Label className="text-sm font-medium text-gray-700">
+                                  How accurately do these results reflect your actual patterns and challenges?
+                                </Label>
+                                <div className="flex gap-2 mt-2">
+                                  {[1, 2, 3, 4, 5].map((rating) => (
+                                    <button
+                                      key={rating}
+                                      onClick={() => setAccuracyRating(rating)}
+                                      className={`p-2 rounded-lg transition-colors ${
+                                        accuracyRating >= rating
+                                          ? 'text-blue-500'
+                                          : 'text-gray-300 hover:text-blue-400'
+                                      }`}
+                                      data-testid={`star-rating-${rating}`}
+                                    >
+                                      <Star className="h-5 w-5 fill-current" />
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <Label htmlFor="valuable-insight" className="text-sm font-medium text-gray-700">
+                                  What was the most valuable insight from your results? (Optional)
+                                </Label>
+                                <Textarea
+                                  id="valuable-insight"
+                                  value={valuableInsight}
+                                  onChange={(e) => setValuableInsight(e.target.value)}
+                                  placeholder="Share what resonated most with you..."
+                                  className="mt-2 text-sm"
+                                  rows={3}
+                                  data-testid="insight-textarea"
+                                />
+                              </div>
+                              
+                              <Button
+                                onClick={submitFeedback}
+                                disabled={accuracyRating === 0 || feedbackLoading}
+                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                                data-testid="submit-feedback-button"
+                              >
+                                {feedbackLoading ? 'Submitting...' : 'Submit Feedback'}
+                              </Button>
+                            </div>
+                          </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Feedback submitted message */}
+                {user && feedbackSubmitted && (
+                  <Card className="bg-blue-50 border-blue-200">
+                    <CardContent className="p-6">
+                      <div className="bg-blue-100 border border-blue-200 rounded-lg p-4">
+                        <p className="text-blue-800 text-sm font-medium">
+                          ✓ Thank you for your feedback! Your insights help us improve the assessment experience.
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,1237 @@
+// Central Questions Data File for Middle Management Assessment
+// This file contains the middle management assessment category with questions, options, archetypes, and scoring logic
+
+import { AssessmentArchetype, AssessmentCategory, AssessmentQuestion, ForcedChoiceBlock, ForcedChoiceStatement, QuestionOption } from './assessment-types'; // Assuming shared interfaces from the original file
+
+// LIKERT Scale (shared from original)
+export const LIKERT_SCALE = {
+  "strongly-disagree": 1,
+  disagree: 2,
+  neutral: 3,
+  agree: 4,
+  "strongly-agree": 5,
+};
+
+// Middle Management Assessment Data
+const MIDDLE_MANAGEMENT_CATEGORY: AssessmentCategory = {
+  id: "middle-management",
+  name: "Middle Management Assessment",
+  description: "Comprehensive middle management style and resistance pattern assessment based on 8 archetypes",
+
+  archetypes: [
+    {
+      id: "micromanager",
+      name: "Micromanager",
+      description: "Holds high standards but often over-invests in control and detail-checking",
+      traits: [
+        "High standards for quality",
+        "Attention to detail",
+        "Control-oriented",
+        "Risk-averse in delegation",
+      ],
+      detailedDescription:
+        "Your results show High Resistance (78%) in how you approach delegation, trust, and team ownership.\nAt your best, you are a manager who holds high standards. You care deeply about quality, know what “good work” looks like, and your attention to detail helps teams avoid costly mistakes. Senior leaders often trust you because your output is consistent and dependable.\nBut when resistance is high, these strengths narrow into control. Instead of empowering others, you may step in too often, recheck every detail, or redo work before it goes upward. To you, this feels like protecting quality — but to your team, it can feel like lack of trust. To senior leaders, it can create concerns about whether you can scale beyond individual contribution.\nThis pattern is called the Micromanager. It does not mean you lack leadership ability. It means your resistance shows up as over-investment in control. When balanced, your standards become an asset. But left unchecked, this pattern can block team growth, limit your promotability, and make it harder for you to step into broader leadership roles.",
+      strengthsInsights: [
+        "Strong standards ensure quality and protect reputation.",
+        "Hands-on knowledge builds credibility with both team and leaders.",
+        "Detail orientation prevents errors from slipping upward.",
+        "Reliability makes you a go-to for critical tasks.",
+      ],
+      resistanceCosts: [
+        "Burn out managers by keeping too much work on their desk.",
+        "Reduce team initiative, as employees wait for approval instead of acting.",
+        "Create delivery bottlenecks when everything requires your sign-off.",
+        "Signal to senior leaders that you are not ready for larger scope or promotion.",
+        "Limit your career path by keeping you in “detail manager” mode instead of preparing you for strategic leadership.",
+      ],
+      developmentAreas: [
+        "Improve delegation and trust in team capabilities",
+        "Focus on outcomes rather than processes",
+        "Develop coaching skills over direct intervention",
+      ],
+      growthPath: {
+        immediateShifts: [
+          "Choose one task this month to delegate fully — no rechecking, no redoing.",
+          "Acknowledge publicly when a team member’s work succeeds without your intervention.",
+        ],
+        strategicPractices: [
+          "Build “trust + verify” systems: delegate ownership but review outcomes at milestones, not every step.",
+          "Clarify upfront expectations so quality is met without your constant input.",
+          "Ask your manager to hold you accountable for reducing rework habits.",
+        ],
+        longTermGrowth: [
+          "Reframe your leadership identity: success is not about controlling every detail, but about developing others to deliver at scale.",
+          "Track your promotion readiness: senior leaders look for managers who empower, not those who redo.",
+          "Model how to balance standards with trust, showing others that true leadership means multiplying output through people, not doing more yourself.",
+        ],
+      },
+      coreBehaviorsUnderResistance: [
+        "Personally recheck or redo team deliverables before releasing them.",
+        "Hesitate to fully delegate important tasks.",
+        "Struggle to accept approaches that differ from their own style.",
+        "Step in quickly when mistakes happen, instead of coaching through them.",
+        "Focus on details at the expense of developing independence in the team.",
+      ],
+      rootCauses: [
+        "Early roles where credibility was tied to accuracy and precision.",
+        "Work cultures where leaders were held directly responsible for every error.",
+        "Past experiences where delegating led to visible failure.",
+        "Belief systems that equated “doing it myself” with reliability and value.",
+      ],
+      beliefsThatDriveResistance: [
+        "“If I don’t check, something will slip.”",
+        "“My credibility depends on perfect output.”",
+        "“Quality is safer in my hands.”",
+        "“Delegation creates risk I can’t control.”",
+        "“Trust must be earned, not given.”",
+      ],
+      whatOthersExperience: {
+        directReports: "Appreciate your clarity but may feel second-guessed. Over time, they become dependent on your approval, which limits their growth.",
+        executivePeers: "Value your high standards but may see you as slowing projects down. Collaboration suffers if every detail routes back through you.",
+        boardInvestors: "Trust your reliability but may question whether you can lead at scale. Micromanagement signals you are stuck in “doing” rather than “leading,” which limits promotion readiness.",
+      },
+      strengthsHiddenInside: [
+        "Strong standards ensure quality and protect reputation.",
+        "Hands-on knowledge builds credibility with both team and leaders.",
+        "Detail orientation prevents errors from slipping upward.",
+        "Reliability makes you a go-to for critical tasks.",
+      ],
+      detailedResistanceCosts: [
+        "Burn out managers by keeping too much work on their desk.",
+        "Reduce team initiative, as employees wait for approval instead of acting.",
+        "Create delivery bottlenecks when everything requires your sign-off.",
+        "Signal to senior leaders that you are not ready for larger scope or promotion.",
+        "Limit your career path by keeping you in “detail manager” mode instead of preparing you for strategic leadership.",
+      ],
+    },
+    {
+      id: "bottleneck-manager",
+      name: "Bottleneck Manager",
+      description: "Ensures quality and alignment but often creates delays through centralized decisions",
+      traits: [
+        "Thorough decision-making",
+        "Alignment-focused",
+        "Cautious progression",
+        "Gatekeeper role",
+      ],
+      detailedDescription:
+        "Your results show High Resistance (74%) in how you manage decisions, approvals, and workflow.\nAt your best, you are a manager who ensures quality and alignment. You want decisions to be well thought-out, and you protect your team from rushing into mistakes. Senior leaders often appreciate your diligence and desire for consistency.\nBut when resistance is high, this instinct for thoroughness turns into delay. You may hold onto approvals too long, slow down progress while seeking clarity, or require sign-off at every step. To you, this feels responsible — but to your team, it feels like stalled momentum. To senior leaders, it can look like indecision or lack of scalability.\nThis pattern is called the Bottleneck Manager. It does not mean you lack capability. It means your resistance shows up as holding too much control over flow, which creates drag on execution and can limit your career growth if not managed.",
+      strengthsInsights: [
+        "Protects quality and reduces avoidable errors.",
+        "Ensures consistency across processes.",
+        "Builds reputation for thoroughness.",
+        "Demonstrates accountability and caution in high-stakes matters.",
+      ],
+      resistanceCosts: [
+        "Slow team productivity and frustrate talent.",
+        "Create project delays that damage credibility with stakeholders.",
+        "Signal to leaders that you lack agility or scalability.",
+        "Limit promotion opportunities if you are seen as stuck in “approval mode.”",
+        "Drain your energy by keeping too many small decisions on your desk.",
+      ],
+      developmentAreas: [
+        "Improve decision delegation",
+        "Enhance agility in processes",
+        "Develop frameworks for faster approvals",
+      ],
+      growthPath: {
+        immediateShifts: [
+          "Choose one routine decision you will no longer approve — push it down.",
+          "Set clear deadlines for your own reviews so projects don’t stall.",
+        ],
+        strategicPractices: [
+          "Create decision-rights frameworks: who approves what, with clarity.",
+          "Train your team on criteria so they can approve confidently without you.",
+          "Use milestones instead of full checkpoints, so progress keeps moving.",
+        ],
+        longTermGrowth: [
+          "Reframe leadership identity: success is enabling throughput, not holding control.",
+          "Track instances where faster delegation led to equal or better outcomes.",
+          "Model for others how disciplined managers can be thorough without slowing the organization.",
+        ],
+      },
+      coreBehaviorsUnderResistance: [
+        "Keep decisions at their level longer than necessary.",
+        "Require projects to pause until they can review personally.",
+        "Hesitate to delegate authority for approvals.",
+        "Delay progress in the name of “getting it right.”",
+        "Create dependency by positioning themselves as the sole gatekeeper.",
+      ],
+      rootCauses: [
+        "Early roles where mistakes were punished more severely than delays.",
+        "Organizational cultures where control equaled credibility.",
+        "Situations where delegating decisions led to visible problems.",
+        "Personal identity tied to being the “reliable checker” who prevents errors.",
+      ],
+      beliefsThatDriveResistance: [
+        "“It’s better to be slow than wrong.”",
+        "“If I don’t sign off, quality can’t be trusted.”",
+        "“Delegating approval is too risky.”",
+        "“Responsibility means everything passes through me.”",
+        "“Careful leaders are respected leaders.”",
+      ],
+      whatOthersExperience: {
+        directReports: "Feel frustrated when work stalls, and may disengage if they lack authority to move projects forward.",
+        executivePeers: "See you as dependable but may avoid routing work through you if they expect delays.",
+        boardInvestors: "Respect your diligence but may question whether you can handle larger scope if decision flow always bottlenecks with you.",
+      },
+      strengthsHiddenInside: [
+        "Protects quality and reduces avoidable errors.",
+        "Ensures consistency across processes.",
+        "Builds reputation for thoroughness.",
+        "Demonstrates accountability and caution in high-stakes matters.",
+      ],
+      detailedResistanceCosts: [
+        "Slow team productivity and frustrate talent.",
+        "Create project delays that damage credibility with stakeholders.",
+        "Signal to leaders that you lack agility or scalability.",
+        "Limit promotion opportunities if you are seen as stuck in “approval mode.”",
+        "Drain your energy by keeping too many small decisions on your desk.",
+      ],
+    },
+    {
+      id: "firefighter",
+      name: "Firefighter",
+      description: "Thrives in crises but often prioritizes urgent issues over long-term planning",
+      traits: [
+        "Crisis management",
+        "Reactive energy",
+        "Quick problem-solving",
+        "High-pressure performer",
+      ],
+      detailedDescription:
+        "Your results show High Resistance (76%) in how you approach urgency and problem-solving.\nAt your best, you are a manager who thrives under pressure. You jump into crises, solve problems quickly, and keep things moving when others freeze. Teams often admire your energy, and senior leaders value your ability to deliver in the moment.\nBut when resistance is high, urgency becomes your default. You may spend more time reacting than preventing, step into every crisis yourself, or neglect long-term priorities while solving today’s emergencies. To you, this feels like being dependable — but to your team, it can feel chaotic. To senior leaders, it can suggest you’re stuck in “firefighting mode” instead of building scalable systems.\nThis pattern is called the Firefighter. It does not mean you lack strategy. It means your resistance shows up as living in urgency, which can erode stability, burn out your team, and limit career advancement.",
+      strengthsInsights: [
+        "Brings energy and confidence during disruption.",
+        "Keeps teams moving when others feel stuck.",
+        "Builds loyalty because people know you’ll “be there” in tough moments.",
+        "Prevents paralysis when fast action is needed.",
+      ],
+      resistanceCosts: [
+        "Keep teams stuck in reactive cycles instead of building capacity.",
+        "Delay or derail strategic priorities because urgent tasks always take precedence.",
+        "Create burnout by pushing constant “all hands on deck” mode.",
+        "Limit your promotability if leaders see you as tactical but not strategic.",
+        "Damage credibility when prevention opportunities are repeatedly missed.",
+      ],
+      developmentAreas: [
+        "Enhance preventative planning",
+        "Improve delegation in crises",
+        "Focus on long-term priorities",
+      ],
+      growthPath: {
+        immediateShifts: [
+          "Identify one recurring issue and commit to solving its root cause, not just the symptoms.",
+          "Step back in the next small crisis — coach a team member to handle it instead.",
+        ],
+        strategicPractices: [
+          "Block dedicated time each week for long-term priorities, protected from interruptions.",
+          "Track crisis frequency to spot patterns you can prevent.",
+          "Celebrate preventative wins as much as urgent saves.",
+        ],
+        longTermGrowth: [
+          "Redefine leadership identity: success is not just solving fires, but preventing them.",
+          "Build systems and team capabilities that make you less essential in day-to-day crises.",
+          "Demonstrate to senior leaders that you can manage both urgency and strategy — a key marker of promotion readiness.",
+        ],
+      },
+      coreBehaviorsUnderResistance: [
+        "Focus on urgent problems at the expense of strategic work.",
+        "Personally step in when issues arise instead of coaching others to resolve them.",
+        "Reward quick fixes over sustainable solutions.",
+        "Allow teams to operate in constant reactive mode.",
+        "Gain visibility through crisis handling rather than steady performance.",
+      ],
+      rootCauses: [
+        "Past roles where recognition came from “saving the day.”",
+        "Teams where preventative work was overlooked but urgency was rewarded.",
+        "Managers who modeled firefighting as leadership.",
+        "Early career wins tied to high-stakes, last-minute interventions.",
+      ],
+      beliefsThatDriveResistance: [
+        "“If I don’t step in, things will fall apart.”",
+        "“My value is in solving problems quickly.”",
+        "“Prevention is invisible; action under pressure is what gets noticed.”",
+        "“Leadership means being the one people call in a crisis.”",
+      ],
+      whatOthersExperience: {
+        directReports: "Appreciate your energy but may burn out if everything feels urgent. They can also become dependent on you to solve issues instead of building independence.",
+        executivePeers: "Respect your responsiveness but may see you as scattered or reactive, which reduces collaboration.",
+        boardInvestors: "Value your reliability in crises but may doubt your readiness for bigger roles if firefighting replaces long-term focus.",
+      },
+      strengthsHiddenInside: [
+        "Brings energy and confidence during disruption.",
+        "Keeps teams moving when others feel stuck.",
+        "Builds loyalty because people know you’ll “be there” in tough moments.",
+        "Prevents paralysis when fast action is needed.",
+      ],
+      detailedResistanceCosts: [
+        "Keep teams stuck in reactive cycles instead of building capacity.",
+        "Delay or derail strategic priorities because urgent tasks always take precedence.",
+        "Create burnout by pushing constant “all hands on deck” mode.",
+        "Limit your promotability if leaders see you as tactical but not strategic.",
+        "Damage credibility when prevention opportunities are repeatedly missed.",
+      ],
+    },
+    {
+      id: "overloaded-doer",
+      name: "Overloaded Doer",
+      description: "Leads by example but often overextends by taking on too much personal work",
+      traits: [
+        "High work ethic",
+        "Hands-on involvement",
+        "Responsibility-driven",
+        "Execution-focused",
+      ],
+      detailedDescription:
+        "Your results show High Resistance (75%) in how you approach workload, delegation, and personal responsibility.\nAt your best, you are a manager who leads by example. You work hard, step in when the team is stretched, and show a strong sense of responsibility. Teams admire your commitment, and senior leaders often view you as reliable and willing to “do what it takes.”\nBut when resistance is high, responsibility becomes overextension. You may take on too many tasks yourself, absorb work meant for others, or struggle to prioritize. To you, it feels like protecting the team or ensuring results — but to your direct reports, it signals you don’t trust them to deliver. To senior leaders, it raises questions about your scalability and ability to lead beyond your own effort.\nThis pattern is called the Overloaded Doer. It does not mean you lack leadership potential. It means your resistance shows up as doing instead of leading, which can stall your career growth and drain team initiative.",
+      strengthsInsights: [
+        "Demonstrates loyalty and visible commitment.",
+        "Builds credibility as someone who “gets things done.”",
+        "Inspires teams through personal example.",
+        "Creates trust that you won’t abandon responsibilities.",
+      ],
+      resistanceCosts: [
+        "Burn you out while reducing your ability to think strategically.",
+        "Limit team growth, since employees aren’t stretched or trusted with big responsibilities.",
+        "Slow execution because too much funnels through you.",
+        "Signal to leaders that you are a strong contributor but not yet promotable.",
+        "Reduce organizational resilience when everything depends on your effort.",
+      ],
+      developmentAreas: [
+        "Enhance delegation skills",
+        "Improve workload prioritization",
+        "Focus on team capacity building",
+      ],
+      growthPath: {
+        immediateShifts: [
+          "Identify one task you are currently carrying that your team can take on — delegate it fully.",
+          "Set limits on your personal workload and communicate them transparently.",
+        ],
+        strategicPractices: [
+          "Use prioritization frameworks (urgent vs. important) to focus on leadership, not just execution.",
+          "Develop your team’s capacity so you don’t need to absorb overflow.",
+          "Measure success by what your team delivers, not just what you personally contribute.",
+        ],
+        longTermGrowth: [
+          "Redefine leadership identity: from “hardest worker” to “capacity builder.”",
+          "Track delegation wins to reinforce your team’s independence.",
+          "Demonstrate to senior leaders that you can scale impact beyond your own output — a key factor for promotion readiness.",
+        ],
+      },
+      coreBehaviorsUnderResistance: [
+        "Personally take on tasks that could be delegated.",
+        "Carry heavier workloads than their teams.",
+        "Measure commitment by how much they personally contribute.",
+        "Struggle to say “no,” even when overloaded.",
+        "Prioritize short-term delivery over building long-term team capacity.",
+      ],
+      rootCauses: [
+        "Early roles where being a “hard worker” was the main path to advancement.",
+        "Teams where doing more than others earned recognition.",
+        "Cultures that celebrated sacrifice and long hours over balance.",
+        "Experiences where delegating led to mistakes that reflected poorly on you.",
+      ],
+      beliefsThatDriveResistance: [
+        "“If I don’t do it, it won’t get done right.”",
+        "“The best way to lead is to carry more than others.”",
+        "“My value is measured in effort, not just outcomes.”",
+        "“Delegating slows things down.”",
+        "“Hard work is the only way to prove myself.”",
+      ],
+      whatOthersExperience: {
+        directReports: "Respect your commitment but may feel underutilized or distrusted if you keep the hardest work for yourself.",
+        executivePeers: "Admire your work ethic but may see you as overwhelmed or scattered.",
+        boardInvestors: "Value your reliability but may doubt your readiness for bigger roles if your success depends on personal effort rather than scalable leadership.",
+      },
+      strengthsHiddenInside: [
+        "Demonstrates loyalty and visible commitment.",
+        "Builds credibility as someone who “gets things done.”",
+        "Inspires teams through personal example.",
+        "Creates trust that you won’t abandon responsibilities.",
+      ],
+      detailedResistanceCosts: [
+        "Burn you out while reducing your ability to think strategically.",
+        "Limit team growth, since employees aren’t stretched or trusted with big responsibilities.",
+        "Slow execution because too much funnels through you.",
+        "Signal to leaders that you are a strong contributor but not yet promotable.",
+        "Reduce organizational resilience when everything depends on your effort.",
+      ],
+    },
+    {
+      id: "conflict-avoider",
+      name: "Conflict Avoider",
+      description: "Values harmony but often delays or softens necessary confrontations",
+      traits: [
+        "Relationship-focused",
+        "Harmony-oriented",
+        "Diplomatic approach",
+        "Empathetic leadership",
+      ],
+      detailedDescription:
+        "Your results show High Resistance (73%) in how you approach conflict, candor, and accountability.\nAt your best, you are a manager who values relationships and creates a respectful environment. You keep the peace, reduce unnecessary friction, and ensure collaboration feels safe. Teams often appreciate your empathy, and senior leaders may view you as someone who keeps operations steady.\nBut when resistance is high, harmony comes at the cost of progress. You may avoid tough feedback, hesitate to address performance issues, or let risks go unspoken. To you, this feels like preserving relationships — but to your team, it signals lowered standards. To senior leaders, it can appear as a reluctance to step into leadership authority when it matters most.\nThis pattern is called the Conflict Avoider. It does not mean you lack courage. It means your resistance shows up as valuing peace over candor, which can quietly undermine accountability and credibility.",
+      strengthsInsights: [
+        "Builds trust and psychological safety within teams.",
+        "Reduces unnecessary tension in day-to-day interactions.",
+        "Encourages cooperation and inclusion.",
+        "Provides a steady presence in politically sensitive environments.",
+      ],
+      resistanceCosts: [
+        "Allow underperformance to weaken team results.",
+        "Delay necessary changes because issues remain unspoken.",
+        "Create hidden frustration within the team if fairness is questioned.",
+        "Limit promotability if leaders see you as agreeable but not authoritative.",
+        "Reduce credibility when tough calls are expected but not made.",
+      ],
+      developmentAreas: [
+        "Build candor in feedback",
+        "Practice direct conflict resolution",
+        "Enhance accountability enforcement",
+      ],
+      growthPath: {
+        immediateShifts: [
+          "Deliver one piece of constructive feedback directly this week.",
+          "State your perspective clearly in your next team or peer meeting, even if it risks disagreement.",
+        ],
+        strategicPractices: [
+          "Use structured feedback frameworks (e.g., “situation–behavior–impact”) to make conversations clear but respectful.",
+          "Pair empathy with accountability by explaining why candor benefits growth.",
+          "Create team norms that treat disagreement as contribution, not conflict.",
+        ],
+        longTermGrowth: [
+          "Reframe leadership: conflict is not damage — it is a tool for clarity and progress.",
+          "Track times when direct feedback improved performance or trust.",
+          "Demonstrate to senior leaders that you can manage tension productively, proving readiness for larger scope.",
+        ],
+      },
+      coreBehaviorsUnderResistance: [
+        "Delay or soften difficult feedback.",
+        "Default to consensus even when issues need direct challenge.",
+        "Redirect conversations away from tension instead of addressing it.",
+        "Resolve surface-level harmony while deeper issues remain unresolved.",
+        "Allow underperformance to continue longer than it should.",
+      ],
+      rootCauses: [
+        "Past workplaces where challenging authority led to negative consequences.",
+        "Cultures that equated politeness with professionalism.",
+        "Managers or mentors who modeled avoidance rather than candor.",
+        "Personal experiences where speaking up damaged relationships or reputation.",
+      ],
+      beliefsThatDriveResistance: [
+        "“Conflict damages relationships.”",
+        "“It’s better to be liked than confrontational.”",
+        "“Feedback will demotivate people.”",
+        "“Disagreement will make me look disloyal.”",
+        "“Harmony is the safest path forward.”",
+      ],
+      whatOthersExperience: {
+        directReports: "Feel supported but may lose respect if you don’t enforce accountability. Some may take advantage of your reluctance to confront issues.",
+        executivePeers: "Value your diplomacy but may see you as passive in tough discussions, reducing your influence.",
+        boardInvestors: "Appreciate your steady presence but may doubt your ability to handle conflict at scale, which limits promotion readiness.",
+      },
+      strengthsHiddenInside: [
+        "Builds trust and psychological safety within teams.",
+        "Reduces unnecessary tension in day-to-day interactions.",
+        "Encourages cooperation and inclusion.",
+        "Provides a steady presence in politically sensitive environments.",
+      ],
+      detailedResistanceCosts: [
+        "Allow underperformance to weaken team results.",
+        "Delay necessary changes because issues remain unspoken.",
+        "Create hidden frustration within the team if fairness is questioned.",
+        "Limit promotability if leaders see you as agreeable but not authoritative.",
+        "Reduce credibility when tough calls are expected but not made.",
+      ],
+    },
+    {
+      id: "credit-seeker",
+      name: "Credit Seeker",
+      description: "Ensures visibility of contributions but often prioritizes personal recognition over team credit",
+      traits: [
+        "Visibility-focused",
+        "Self-advocacy",
+        "Ambition-driven",
+        "Recognition-oriented",
+      ],
+      detailedDescription:
+        "Your results show High Resistance (72%) in how you approach recognition, visibility, and career advancement.\nAt your best, you are a manager who ensures accomplishments don’t go unnoticed. You advocate for yourself, highlight your role in wins, and make sure senior leaders are aware of your contributions. This visibility often helps your career progression and signals ambition.\nBut when resistance is high, recognition becomes overemphasis. You may over-claim credit, spotlight your own role above the team’s, or focus more on how outcomes reflect on you than on collective progress. To you, this feels like protecting your visibility — but to your team, it can feel demotivating. To senior leaders, it may raise doubts about whether you can lead with maturity and collaboration.\nThis pattern is called the Credit Seeker. It does not mean you lack leadership value. It means your resistance shows up as leaning too heavily on visibility for personal advancement, which can undermine trust and slow your career growth.",
+      strengthsInsights: [
+        "Ensures important accomplishments get visibility.",
+        "Builds momentum for career advancement.",
+        "Demonstrates ambition and personal drive.",
+        "Signals confidence in one’s contributions.",
+      ],
+      resistanceCosts: [
+        "Lower team morale when recognition doesn’t feel fairly shared.",
+        "Damage peer trust and reduce collaboration.",
+        "Create reputational risk if senior leaders perceive you as self-promoting.",
+        "Limit advancement if ambition overshadows teamwork.",
+        "Make it harder to retain strong talent, since employees may feel their work is invisible.",
+      ],
+      developmentAreas: [
+        "Enhance team advocacy",
+        "Balance self-promotion with collaboration",
+        "Focus on shared successes",
+      ],
+      growthPath: {
+        immediateShifts: [
+          "In your next update, highlight at least two team members’ contributions by name.",
+          "When recognized personally, redirect part of the credit back to the group.",
+        ],
+        strategicPractices: [
+          "Track both your achievements and your team’s impact — present them together.",
+          "Build alliances with peers by spotlighting shared wins.",
+          "Ask senior leaders for feedback on how you balance self-advocacy with team advocacy.",
+        ],
+        longTermGrowth: [
+          "Reframe recognition: career growth comes from building credibility for lifting others as well as yourself.",
+          "Model visible team advocacy, proving that success expands when credit is shared.",
+          "Demonstrate to senior leaders that you can balance ambition with collaboration — a hallmark of promotable leadership.",
+        ],
+      },
+      coreBehaviorsUnderResistance: [
+        "Emphasize their own role when sharing results upward.",
+        "Position wins as proof of their personal leadership rather than team collaboration.",
+        "Focus on visibility in front of senior leaders more than alignment with peers.",
+        "Redirect recognition toward themselves when outcomes are positive.",
+        "Undervalue the contributions of others when under pressure.",
+      ],
+      rootCauses: [
+        "Organizations where visibility mattered more than performance quality.",
+        "Early roles where advancement required constant self-advocacy.",
+        "Leaders who modeled “self-promotion first” as the way to get ahead.",
+        "Past experiences where contributions were overlooked unless you claimed them.",
+      ],
+      beliefsThatDriveResistance: [
+        "“If I don’t highlight my role, no one else will.”",
+        "“Visibility is more important than collaboration.”",
+        "“Careers are built on recognition, not just results.”",
+        "“Sharing credit dilutes my impact.”",
+        "“To advance, I must stand out above the team.”",
+      ],
+      whatOthersExperience: {
+        directReports: "May feel overlooked or undervalued if their contributions are minimized. Over time, this reduces motivation and engagement.",
+        executivePeers: "Can view you as competitive or self-serving, which makes collaboration harder.",
+        boardInvestors: "Notice your drive, but may question whether you can lead with balance and maturity, which can affect promotability.",
+      },
+      strengthsHiddenInside: [
+        "Ensures important accomplishments get visibility.",
+        "Builds momentum for career advancement.",
+        "Demonstrates ambition and personal drive.",
+        "Signals confidence in one’s contributions.",
+      ],
+      detailedResistanceCosts: [
+        "Lower team morale when recognition doesn’t feel fairly shared.",
+        "Damage peer trust and reduce collaboration.",
+        "Create reputational risk if senior leaders perceive you as self-promoting.",
+        "Limit advancement if ambition overshadows teamwork.",
+        "Make it harder to retain strong talent, since employees may feel their work is invisible.",
+      ],
+    },
+    {
+      id: "detached-manager",
+      name: "Detached Manager",
+      description: "Maintains objectivity but often creates emotional distance from team",
+      traits: [
+        "Objective decision-making",
+        "Professional boundaries",
+        "Task-focused",
+        "Consistency under pressure",
+      ],
+      detailedDescription:
+        "Your results show High Resistance (71%) in how you approach relationships, team engagement, and emotional connection.\nAt your best, you are a manager who brings objectivity and focus. You prioritize results, keep professional boundaries, and avoid getting lost in emotions. Teams can rely on you for fairness and consistency, while senior leaders may value your task focus.\nBut when resistance is high, distance becomes disengagement. You may focus only on tasks, avoid personal connection, or miss signals of low morale. To you, this feels like professionalism — but to your team, it can feel like disinterest. To senior leaders, it raises concerns about your ability to inspire and retain talent, both critical for promotability.\nThis pattern is called the Detached Manager. It does not mean you lack care for your team. It means your resistance shows up as emotional distance, which can reduce trust, weaken loyalty, and limit your leadership brand.",
+      strengthsInsights: [
+        "Brings fairness and objectivity to decision-making.",
+        "Keeps professional boundaries clear.",
+        "Focuses on output and delivery without distraction.",
+        "Demonstrates consistency under pressure.",
+      ],
+      resistanceCosts: [
+        "Increase disengagement and turnover on your team.",
+        "Reduce trust and loyalty from direct reports.",
+        "Limit your ability to influence culture or morale.",
+        "Create a reputation as task-focused but not people-focused.",
+        "Signal to leaders that you’re not ready for larger people-leadership roles.",
+      ],
+      developmentAreas: [
+        "Build emotional connections",
+        "Enhance active listening",
+        "Focus on team engagement",
+      ],
+      growthPath: {
+        immediateShifts: [
+          "Ask one personal, open-ended question in each 1:1 this week.",
+          "Provide specific praise when you see effort, not just results.",
+        ],
+        strategicPractices: [
+          "Build regular team rituals that strengthen connection (check-ins, recognition moments).",
+          "Practice active listening in conversations — reflect back what you hear.",
+          "Set goals that include both performance and engagement outcomes.",
+        ],
+        longTermGrowth: [
+          "Reframe leadership: influence grows through connection, not just direction.",
+          "Track retention and morale metrics alongside results to strengthen credibility.",
+          "Demonstrate to senior leaders that you can inspire, not just manage — proving readiness for higher-level leadership.",
+        ],
+      },
+      coreBehaviorsUnderResistance: [
+        "Keep conversations focused on tasks and deadlines.",
+        "Provide limited personal feedback or encouragement.",
+        "Miss emotional cues that signal disengagement.",
+        "Maintain relationships at a surface level.",
+        "Treat morale issues as “HR’s responsibility” rather than part of their role.",
+      ],
+      rootCauses: [
+        "Organizations that valued output over engagement.",
+        "Leaders who modeled detachment as strength.",
+        "Early roles where showing vulnerability was criticized.",
+        "Experiences where connecting too personally backfired.",
+      ],
+      beliefsThatDriveResistance: [
+        "“Work and personal lives should be separate.”",
+        "“My job is to manage tasks, not emotions.”",
+        "“Engagement is HR’s role, not mine.”",
+        "“If I get too close, I lose authority.”",
+        "“Professional distance protects me.”",
+      ],
+      whatOthersExperience: {
+        directReports: "See you as fair but may feel unseen or undervalued. Disengagement and turnover risks increase when they don’t feel connected.",
+        executivePeers: "Respect your focus but may view you as uninvolved or unavailable for collaboration.",
+        boardInvestors: "Appreciate your results but may question your ability to retain and inspire talent at scale, a key marker for promotion.",
+      },
+      strengthsHiddenInside: [
+        "Brings fairness and objectivity to decision-making.",
+        "Keeps professional boundaries clear.",
+        "Focuses on output and delivery without distraction.",
+        "Demonstrates consistency under pressure.",
+      ],
+      detailedResistanceCosts: [
+        "Increase disengagement and turnover on your team.",
+        "Reduce trust and loyalty from direct reports.",
+        "Limit your ability to influence culture or morale.",
+        "Create a reputation as task-focused but not people-focused.",
+        "Signal to leaders that you’re not ready for larger people-leadership roles.",
+      ],
+    },
+    {
+      id: "rule-bound-operator",
+      name: "Rule-Bound Operator",
+      description: "Ensures consistency through processes but often resists flexibility",
+      traits: [
+        "Process-oriented",
+        "Compliance-focused",
+        "Structure-dependent",
+        "Routine-maintaining",
+      ],
+      detailedDescription:
+        "Your results show High Resistance (72%) in how you approach processes, rules, and consistency.\nAt your best, you are a manager who ensures standards are followed and errors are minimized. You bring structure, fairness, and predictability. Teams can rely on you to set clear expectations, and senior leaders trust that you will safeguard compliance and stability.\nBut when resistance is high, structure becomes rigidity. You may rely too heavily on rules, resist flexibility, or slow down innovation. To you, this feels like protecting consistency — but to your team, it can feel restrictive. To senior leaders, it can signal you are reliable in operations but not adaptive enough for higher-level roles.\nThis pattern is called the Rule-Bound Operator. It does not mean you lack adaptability. It means your resistance shows up as over-attachment to rules and processes, which can stall agility and limit promotability.",
+      strengthsInsights: [
+        "Ensures stability and compliance.",
+        "Brings order and predictability to complex work.",
+        "Builds trust through fairness and consistency.",
+        "Protects the organization from reckless shortcuts.",
+      ],
+      resistanceCosts: [
+        "Slow down execution when strict process takes priority over agility.",
+        "Reduce innovation by discouraging experimentation.",
+        "Frustrate teams who want autonomy and creative problem solving.",
+        "Signal to leaders that you are strong in operations but not ready for dynamic roles.",
+        "Limit your upward mobility if you are seen as inflexible.",
+      ],
+      developmentAreas: [
+        "Increase flexibility in processes",
+        "Encourage innovation",
+        "Balance rules with adaptability",
+      ],
+      growthPath: {
+        immediateShifts: [
+          "In your next project, allow one process exception to test flexibility.",
+          "Ask your team for input on where rules help and where they hinder.",
+        ],
+        strategicPractices: [
+          "Pilot new approaches on a small scale before requiring full compliance.",
+          "Balance process reviews with innovation discussions.",
+          "Acknowledge when adapting a rule creates better outcomes.",
+        ],
+        longTermGrowth: [
+          "Reframe leadership: true consistency includes adaptability.",
+          "Track results from flexible approaches to prove their value.",
+          "Show senior leaders that you can protect standards and enable agility — a marker of promotable leadership.",
+        ],
+      },
+      coreBehaviorsUnderResistance: [
+        "Default to established rules, even when situations require creativity.",
+        "Slow down projects to ensure procedures are followed.",
+        "Resist adapting processes to fit new challenges.",
+        "Discourage experimentation in favor of compliance.",
+        "Treat deviation from standards as risk rather than opportunity.",
+      ],
+      rootCauses: [
+        "Organizations where mistakes were punished more than delays.",
+        "Industries with strong regulatory or procedural focus.",
+        "Leaders who modeled “by the book” as the only safe path.",
+        "Experiences where breaking rules created setbacks or criticism.",
+      ],
+      beliefsThatDriveResistance: [
+        "“Rules exist for a reason — bending them is dangerous.”",
+        "“Consistency matters more than creativity.”",
+        "“If everyone followed the rules, we’d have fewer problems.”",
+        "“My credibility depends on doing things the right way.”",
+        "“Flexibility creates risk.”",
+      ],
+      whatOthersExperience: {
+        directReports: "Appreciate clarity but may feel constrained when new ideas are dismissed. Innovation can suffer if processes dominate.",
+        executivePeers: "Respect your reliability but may bypass you when quick adaptation is required.",
+        boardInvestors: "Value your operational strength but may question whether you can lead transformation, which limits promotion potential.",
+      },
+      strengthsHiddenInside: [
+        "Ensures stability and compliance.",
+        "Brings order and predictability to complex work.",
+        "Builds trust through fairness and consistency.",
+        "Protects the organization from reckless shortcuts.",
+      ],
+      detailedResistanceCosts: [
+        "Slow down execution when strict process takes priority over agility.",
+        "Reduce innovation by discouraging experimentation.",
+        "Frustrate teams who want autonomy and creative problem solving.",
+        "Signal to leaders that you are strong in operations but not ready for dynamic roles.",
+        "Limit your upward mobility if you are seen as inflexible.",
+      ],
+    },
+  ],
+
+  questions: {
+    direct: [
+      {
+        id: "q1",
+        type: "direct",
+        text: "I often step in to re-do or double-check my team’s work.",
+        archetype: "micromanager",
+      },
+      {
+        id: "q2",
+        type: "direct",
+        text: "I prefer to stay closely involved in day-to-day tasks.",
+        archetype: "micromanager",
+      },
+      {
+        id: "q7",
+        type: "direct",
+        text: "Decisions often wait on me before progress can continue.",
+        archetype: "bottleneck-manager",
+      },
+      {
+        id: "q8",
+        type: "direct",
+        text: "My team hesitates to act until I give explicit direction.",
+        archetype: "bottleneck-manager",
+      },
+      {
+        id: "q13",
+        type: "direct",
+        text: "I spend more time reacting to urgent issues than planning ahead.",
+        archetype: "firefighter",
+      },
+      {
+        id: "q14",
+        type: "direct",
+        text: "My days are dominated by back-to-back problems.",
+        archetype: "firefighter",
+      },
+      {
+        id: "q19",
+        type: "direct",
+        text: "I often take on more work than I can realistically handle.",
+        archetype: "overloaded-doer",
+      },
+      {
+        id: "q20",
+        type: "direct",
+        text: "I say yes to requests, even when my plate is already full.",
+        archetype: "overloaded-doer",
+      },
+      {
+        id: "q25",
+        type: "direct",
+        text: "I often soften or delay feedback to my team.",
+        archetype: "conflict-avoider",
+      },
+      {
+        id: "q26",
+        type: "direct",
+        text: "I avoid pushing back on unrealistic requests from leadership.",
+        archetype: "conflict-avoider",
+      },
+      {
+        id: "q31",
+        type: "direct",
+        text: "I often highlight my role in successes to make sure I’m noticed.",
+        archetype: "credit-seeker",
+      },
+      {
+        id: "q32",
+        type: "direct",
+        text: "Visibility with leadership is as important to me as results.",
+        archetype: "credit-seeker",
+      },
+      {
+        id: "q37",
+        type: "direct",
+        text: "I sometimes disengage from my team when work feels overwhelming.",
+        archetype: "detached-manager",
+      },
+      {
+        id: "q38",
+        type: "direct",
+        text: "My peers sometimes see me as “checked out” in meetings.",
+        archetype: "detached-manager",
+      },
+      {
+        id: "q43",
+        type: "direct",
+        text: "I prefer strict processes and procedures, even if they slow us down.",
+        archetype: "rule-bound-operator",
+      },
+      {
+        id: "q44",
+        type: "direct",
+        text: "I resist changes that disrupt established routines.",
+        archetype: "rule-bound-operator",
+      },
+    ],
+    oblique: [
+      {
+        id: "q3",
+        type: "oblique",
+        text: "When delegating, I believe it’s best to…",
+        archetype: "micromanager",
+        options: [
+          { value: "a", text: "Check in often to ensure quality", archetypeScore: 5 },
+          { value: "b", text: "Trust the team to manage independently", archetypeScore: 1 },
+          { value: "c", text: "Step back until final results", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q4",
+        type: "oblique",
+        text: "In group projects, I usually:",
+        archetype: "micromanager",
+        options: [
+          { value: "a", text: "Track every detail myself", archetypeScore: 5 },
+          { value: "b", text: "Allow the team to self-organize", archetypeScore: 1 },
+          { value: "c", text: "Provide broad direction and step back", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q9",
+        type: "oblique",
+        text: "When problems escalate, I usually…",
+        archetype: "bottleneck-manager",
+        options: [
+          { value: "a", text: "Try to solve them myself", archetypeScore: 5 },
+          { value: "b", text: "Ask my team to handle them first", archetypeScore: 1 },
+          { value: "c", text: "Escalate upward quickly", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q10",
+        type: "oblique",
+        text: "In balancing senior leadership vs. my team’s needs, I often:",
+        archetype: "bottleneck-manager",
+        options: [
+          { value: "a", text: "Pause decisions until both sides are clear", archetypeScore: 5 },
+          { value: "b", text: "Push forward with one side regardless", archetypeScore: 1 },
+          { value: "c", text: "Let the team decide independently", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q15",
+        type: "oblique",
+        text: "When a deadline is near, I tend to…",
+        archetype: "firefighter",
+        options: [
+          { value: "a", text: "Focus on long-term tasks", archetypeScore: 1 },
+          { value: "b", text: "Handle whatever urgent issue is in front of me", archetypeScore: 5 },
+          { value: "c", text: "Step back and let others take over", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q16",
+        type: "oblique",
+        text: "In meetings, I often:",
+        archetype: "firefighter",
+        options: [
+          { value: "a", text: "Push to solve immediate problems", archetypeScore: 5 },
+          { value: "b", text: "Raise long-term priorities", archetypeScore: 1 },
+          { value: "c", text: "Focus on recognition opportunities", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q21",
+        type: "oblique",
+        text: "When my team is struggling, I usually:",
+        archetype: "overloaded-doer",
+        options: [
+          { value: "a", text: "Step in and take over tasks myself", archetypeScore: 5 },
+          { value: "b", text: "Coach them through it", archetypeScore: 3 },
+          { value: "c", text: "Let them find their own solution", archetypeScore: 1 },
+        ],
+      },
+      {
+        id: "q22",
+        type: "oblique",
+        text: "To prove my value, I tend to…",
+        archetype: "overloaded-doer",
+        options: [
+          { value: "a", text: "Stay heavily involved in daily execution", archetypeScore: 5 },
+          { value: "b", text: "Focus mainly on long-term strategy", archetypeScore: 1 },
+          { value: "c", text: "Build visibility through recognition", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q27",
+        type: "oblique",
+        text: "When disagreements arise, I usually:",
+        archetype: "conflict-avoider",
+        options: [
+          { value: "a", text: "Avoid the issue to keep harmony", archetypeScore: 5 },
+          { value: "b", text: "Address them head-on", archetypeScore: 1 },
+          { value: "c", text: "Escalate immediately", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q28",
+        type: "oblique",
+        text: "When peers frustrate me, I tend to:",
+        archetype: "conflict-avoider",
+        options: [
+          { value: "a", text: "Stay quiet to avoid conflict", archetypeScore: 5 },
+          { value: "b", text: "Raise the issue directly", archetypeScore: 1 },
+          { value: "c", text: "Use humor to lighten the mood", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q33",
+        type: "oblique",
+        text: "In meetings, I usually:",
+        archetype: "credit-seeker",
+        options: [
+          { value: "a", text: "Speak up to ensure my contributions are seen", archetypeScore: 5 },
+          { value: "b", text: "Stay quiet unless directly asked", archetypeScore: 1 },
+          { value: "c", text: "Focus on group harmony", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q34",
+        type: "oblique",
+        text: "When projects succeed, I tend to:",
+        archetype: "credit-seeker",
+        options: [
+          { value: "a", text: "Make sure leadership knows my contribution", archetypeScore: 5 },
+          { value: "b", text: "Credit the team and step back", archetypeScore: 1 },
+          { value: "c", text: "Avoid taking any credit", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q39",
+        type: "oblique",
+        text: "When projects pile up, I usually:",
+        archetype: "detached-manager",
+        options: [
+          { value: "a", text: "Withdraw and focus only on minimal essentials", archetypeScore: 5 },
+          { value: "b", text: "Stay engaged and push through with energy", archetypeScore: 1 },
+          { value: "c", text: "Take on extra tasks to prove my value", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q40",
+        type: "oblique",
+        text: "In cross-functional work, I tend to:",
+        archetype: "detached-manager",
+        options: [
+          { value: "a", text: "Step back and let others lead", archetypeScore: 5 },
+          { value: "b", text: "Stay actively involved", archetypeScore: 1 },
+          { value: "c", text: "Push to be recognized", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q45",
+        type: "oblique",
+        text: "When priorities shift suddenly, I usually:",
+        archetype: "rule-bound-operator",
+        options: [
+          { value: "a", text: "Stick to the original plan", archetypeScore: 5 },
+          { value: "b", text: "Adapt quickly and flex with new direction", archetypeScore: 1 },
+          { value: "c", text: "Step back until clarity is restored", archetypeScore: 3 },
+        ],
+      },
+      {
+        id: "q46",
+        type: "oblique",
+        text: "In decision-making, I believe it’s best to:",
+        archetype: "rule-bound-operator",
+        options: [
+          { value: "a", text: "Follow established procedures above all else", archetypeScore: 5 },
+          { value: "b", text: "Balance procedures with flexibility", archetypeScore: 3 },
+          { value: "c", text: "Trust people to figure it out creatively", archetypeScore: 1 },
+        ],
+      },
+    ],
+    scenario: [], // No explicit scenario questions; oblique serves similar purpose
+    forcedChoice: [
+      {
+        id: "q5",
+        statements: [
+          { text: "“I recheck tasks to make sure they’re right.”", archetype: "micromanager" },
+          { text: "“I delay decisions until I’m certain.”", archetype: "bottleneck-manager" },
+          { text: "“I jump in to fix urgent issues.”", archetype: "firefighter" },
+          { text: "“I step back and let the team handle things.”", archetype: "detached-manager" },
+        ],
+      },
+      {
+        id: "q6",
+        statements: [
+          { text: "“I feel uneasy unless I see the details myself.”", archetype: "micromanager" },
+          { text: "“I prefer predictable rules to guide my work.”", archetype: "rule-bound-operator" },
+          { text: "“I take on extra work to prove my value.”", archetype: "overloaded-doer" },
+          { text: "“I smooth over disagreements quickly.”", archetype: "conflict-avoider" },
+        ],
+      },
+      {
+        id: "q11",
+        statements: [
+          { text: "“I wait for approval before moving forward.”", archetype: "bottleneck-manager" },
+          { text: "“I dive into daily tasks myself.”", archetype: "overloaded-doer" },
+          { text: "“I avoid giving tough feedback.”", archetype: "conflict-avoider" },
+          { text: "“I focus on visibility to leadership.”", archetype: "credit-seeker" },
+        ],
+      },
+      {
+        id: "q12",
+        statements: [
+          { text: "“I feel safer keeping decisions with me.”", archetype: "bottleneck-manager" },
+          { text: "“I prefer predictable rules to guide my work.”", archetype: "rule-bound-operator" },
+          { text: "“I withdraw when work feels overwhelming.”", archetype: "detached-manager" },
+          { text: "“I jump into crises as they arise.”", archetype: "firefighter" },
+        ],
+      },
+      {
+        id: "q17",
+        statements: [
+          { text: "“I thrive in high-pressure, urgent situations.”", archetype: "firefighter" },
+          { text: "“I recheck everything for accuracy.”", archetype: "micromanager" },
+          { text: "“I avoid tough conversations.”", archetype: "conflict-avoider" },
+          { text: "“I keep work predictable with rules.”", archetype: "rule-bound-operator" },
+        ],
+      },
+      {
+        id: "q18",
+        statements: [
+          { text: "“I drop everything to handle urgent issues.”", archetype: "firefighter" },
+          { text: "“I wait for approval before acting.”", archetype: "bottleneck-manager" },
+          { text: "“I step back and disengage when overloaded.”", archetype: "detached-manager" },
+          { text: "“I look for visibility with senior leaders.”", archetype: "credit-seeker" },
+        ],
+      },
+      {
+        id: "q23",
+        statements: [
+          { text: "“I say yes even if it overextends me.”", archetype: "overloaded-doer" },
+          { text: "“I enforce procedures and rules.”", archetype: "rule-bound-operator" },
+          { text: "“I retreat when work feels overwhelming.”", archetype: "detached-manager" },
+          { text: "“I lighten tension by avoiding conflict.”", archetype: "conflict-avoider" },
+        ],
+      },
+      {
+        id: "q24",
+        statements: [
+          { text: "“I step in and do the work myself.”", archetype: "overloaded-doer" },
+          { text: "“I thrive in urgent, high-stress moments.”", archetype: "firefighter" },
+          { text: "“I avoid giving hard feedback.”", archetype: "conflict-avoider" },
+          { text: "“I focus on being recognized by leaders.”", archetype: "credit-seeker" },
+        ],
+      },
+      {
+        id: "q29",
+        statements: [
+          { text: "“I avoid hard conversations to maintain peace.”", archetype: "conflict-avoider" },
+          { text: "“I double-check details myself.”", archetype: "micromanager" },
+          { text: "“I focus on recognition from leaders.”", archetype: "credit-seeker" },
+          { text: "“I retreat into my own space when stressed.”", archetype: "detached-manager" },
+        ],
+      },
+      {
+        id: "q30",
+        statements: [
+          { text: "“I soften disagreements to keep harmony.”", archetype: "conflict-avoider" },
+          { text: "“I wait until I feel ready before acting.”", archetype: "bottleneck-manager" },
+          { text: "“I throw myself into urgent issues.”", archetype: "firefighter" },
+          { text: "“I follow set procedures closely.”", archetype: "rule-bound-operator" },
+        ],
+      },
+      {
+        id: "q35",
+        statements: [
+          { text: "“I emphasize my role so leadership sees my impact.”", archetype: "credit-seeker" },
+          { text: "“I avoid conflict whenever possible.”", archetype: "conflict-avoider" },
+          { text: "“I rely on rules and procedures to guide me.”", archetype: "rule-bound-operator" },
+          { text: "“I take on more work than I should.”", archetype: "overloaded-doer" },
+        ],
+      },
+      {
+        id: "q36",
+        statements: [
+          { text: "“I pursue visibility to create future opportunities.”", archetype: "credit-seeker" },
+          { text: "“I dive into urgent problems quickly.”", archetype: "firefighter" },
+          { text: "“I withdraw when leadership pressures rise.”", archetype: "detached-manager" },
+          { text: "“I double-check all the details myself.”", archetype: "micromanager" },
+        ],
+      },
+      {
+        id: "q41",
+        statements: [
+          { text: "“I withdraw when overwhelmed.”", archetype: "detached-manager" },
+          { text: "“I recheck everything for quality.”", archetype: "micromanager" },
+          { text: "“I avoid difficult conversations.”", archetype: "conflict-avoider" },
+          { text: "“I push for my role to be recognized.”", archetype: "credit-seeker" },
+        ],
+      },
+      {
+        id: "q42",
+        statements: [
+          { text: "“I step back when things get too chaotic.”", archetype: "detached-manager" },
+          { text: "“I thrive when solving urgent problems.”", archetype: "firefighter" },
+          { text: "“I follow rules more than adapt.”", archetype: "rule-bound-operator" },
+          { text: "“I say yes to too many requests.”", archetype: "overloaded-doer" },
+        ],
+      },
+      {
+        id: "q47",
+        statements: [
+          { text: "“I prefer rules and structure to guide my work.”", archetype: "rule-bound-operator" },
+          { text: "“I delay decisions until I’m confident.”", archetype: "bottleneck-manager" },
+          { text: "“I step in and re-do tasks myself.”", archetype: "micromanager" },
+          { text: "“I lighten tension with humor.”", archetype: "conflict-avoider" },
+        ],
+      },
+      {
+        id: "q48",
+        statements: [
+          { text: "“I rely on procedures even in new situations.”", archetype: "rule-bound-operator" },
+          { text: "“I disengage when overwhelmed.”", archetype: "detached-manager" },
+          { text: "“I seek visibility with leaders.”", archetype: "credit-seeker" },
+          { text: "“I take on extra work beyond my role.”", archetype: "overloaded-doer" },
+        ],
+      },
+    ],
+    balancing: [
+      {
+        id: "q49",
+        type: "balancing",
+        text: "I trust my team to complete tasks without my direct oversight.",
+        archetype: "micromanager",
+        isReverseCoded: true,
+      },
+      {
+        id: "q50",
+        type: "balancing",
+        text: "I move forward with decisions even without full approval.",
+        archetype: "bottleneck-manager",
+        isReverseCoded: true,
+      },
+      {
+        id: "q51",
+        type: "balancing",
+        text: "I prioritize long-term planning over reacting to daily issues.",
+        archetype: "firefighter",
+        isReverseCoded: true,
+      },
+      {
+        id: "q52",
+        type: "balancing",
+        text: "I say no when my workload is already full.",
+        archetype: "overloaded-doer",
+        isReverseCoded: true,
+      },
+      {
+        id: "q53",
+        type: "balancing",
+        text: "I raise concerns directly with leadership when needed.",
+        archetype: "conflict-avoider",
+        isReverseCoded: true,
+      },
+      {
+        id: "q54",
+        type: "balancing",
+        text: "I give credit to the team before myself.",
+        archetype: "credit-seeker",
+        isReverseCoded: true,
+      },
+      {
+        id: "q55",
+        type: "balancing",
+        text: "I stay engaged even when work feels heavy.",
+        archetype: "detached-manager",
+        isReverseCoded: true,
+      },
+      {
+        id: "q56",
+        type: "balancing",
+        text: "I flex processes when the situation requires it.",
+        archetype: "rule-bound-operator",
+        isReverseCoded: true,
+      },
+      {
+        id: "q57",
+        type: "balancing",
+        text: "I welcome tough conversations as part of leadership.",
+        archetype: "conflict-avoider",
+        isReverseCoded: true,
+      },
+      {
+        id: "q58",
+        type: "balancing",
+        text: "I focus on results more than visibility.",
+        archetype: "credit-seeker",
+        isReverseCoded: true,
+      },
+      {
+        id: "q59",
+        type: "balancing",
+        text: "I step into planning rather than waiting for problems.",
+        archetype: "firefighter",
+        isReverseCoded: true,
+      },
+      {
+        id: "q60",
+        type: "balancing",
+        text: "I delegate and let go of control once tasks are assigned.",
+        archetype: "micromanager",
+        isReverseCoded: true,
+      },
+    ],
+  },
+
+  scoring: {
+    likertScale: LIKERT_SCALE,
+    forcedChoiceMost: 2,
+    forcedChoiceLeast: -1,
+    scenarioArchetypeLinked: 5, // For oblique with options, treat as scenario
+    scenarioNeutral: 3,
+    scenarioOpposite: 1,
+    resistanceLevels: {
+      low: { min: 0, max: 39 },
+      moderate: { min: 40, max: 69 },
+      high: { min: 70, max: 100 },
+    },
+  },
+};
+
+// Export the middle management category
+export const MIDDLE_MANAGEMENT_ASSESSMENT = MIDDLE_MANAGEMENT_CATEGORY;
+
+// To integrate with the original file, you could add to ASSESSMENT_CATEGORIES
+// export const ASSESSMENT_CATEGORIES: Record<string, AssessmentCategory> = {
+//   ...originalCategories,
+//   'middle-management': MIDDLE_MANAGEMENT_CATEGORY,
+// };

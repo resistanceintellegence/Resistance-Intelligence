@@ -1,0 +1,1163 @@
+import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Activity,
+  Brain,
+  Target,
+  ArrowLeft,
+  AlertTriangle,
+  TrendingUp,
+  BarChart3,
+  Star,
+  MessageSquare,
+  RotateCcw,
+  Heart,
+  Zap,
+  Search,
+  Settings,
+  BookOpen,
+  Eye,
+  User,
+  Lightbulb,
+  Users,
+  Building,
+  Gift,
+  TrendingDown,
+} from "lucide-react";
+import { getAssessmentData, type AssessmentArchetype } from "../data/registry";
+import {
+  getResistanceLevelDetails,
+  type AssessmentResult,
+} from "./scoring-engine";
+
+// Local helper function to determine resistance level
+function getResistanceLevel(percentage: number): string {
+  if (percentage <= 34) return "low";
+  if (percentage <= 50) return "moderate";
+  return "high";
+}
+
+interface ResultsTemplateProps {
+  categoryId: string;
+}
+
+export default function ResultsTemplate({ categoryId }: ResultsTemplateProps) {
+  const [, setLocation] = useLocation();
+  const { user } = useAuth();
+  const [feedback, setFeedback] = useState("");
+  const [rating, setRating] = useState(0);
+
+  // Assessment category color mapping (matches dashboard.tsx)
+  const assessmentStyles = {
+    leadership: {
+      cardBg: "#EDE7F6",
+      buttonBg: "#7E57C2",
+      buttonHover: "#6A4DA8",
+    },
+    "middle-management": {
+      cardBg: "#B3D9FF",
+      buttonBg: "#5BB8F5",
+      buttonHover: "#4A9FE8",
+    },
+    career: {
+      cardBg: "#B3F0E6",
+      buttonBg: "#4DD0C7",
+      buttonHover: "#40BDB3",
+    },
+    team: {
+      cardBg: "#F5DEB3",
+      buttonBg: "#D2B48C",
+      buttonHover: "#BFA176",
+    },
+    individual: {
+      cardBg: "#F7F7F0",
+      buttonBg: "#2E8B57",
+      buttonHover: "#276C45",
+    },
+    sales: {
+      cardBg: "#FFE5CC",
+      buttonBg: "#FF7043",
+      buttonHover: "#E64A19",
+    },
+  };
+
+  // Content color mappings based on category
+  const contentColors = {
+    leadership: {
+      light: "bg-purple-50",
+      medium: "bg-purple-100",
+      dark: "bg-purple-200",
+      borderLight: "border-purple-200",
+      borderMedium: "border-purple-300",
+      gradientLight: "bg-gradient-to-r from-purple-50 to-purple-100",
+      gradientMedium: "bg-gradient-to-r from-purple-100 to-purple-200",
+    },
+    "middle-management": {
+      light: "bg-blue-50",
+      medium: "bg-blue-100",
+      dark: "bg-blue-200",
+      borderLight: "border-blue-200",
+      borderMedium: "border-blue-300",
+      gradientLight: "bg-gradient-to-r from-blue-50 to-blue-100",
+      gradientMedium: "bg-gradient-to-r from-blue-100 to-blue-200",
+    },
+    career: {
+      light: "bg-teal-50",
+      medium: "bg-teal-100",
+      dark: "bg-teal-200",
+      borderLight: "border-teal-200",
+      borderMedium: "border-teal-300",
+      gradientLight: "bg-gradient-to-r from-teal-50 to-teal-100",
+      gradientMedium: "bg-gradient-to-r from-teal-100 to-teal-200",
+    },
+    team: {
+      light: "bg-amber-50",
+      medium: "bg-amber-100",
+      dark: "bg-amber-200",
+      borderLight: "border-amber-200",
+      borderMedium: "border-amber-300",
+      gradientLight: "bg-gradient-to-r from-amber-50 to-amber-100",
+      gradientMedium: "bg-gradient-to-r from-amber-100 to-amber-200",
+    },
+    individual: {
+      light: "bg-emerald-50",
+      medium: "bg-emerald-100",
+      dark: "bg-emerald-200",
+      borderLight: "border-emerald-200",
+      borderMedium: "border-emerald-300",
+      gradientLight: "bg-gradient-to-r from-emerald-50 to-emerald-100",
+      gradientMedium: "bg-gradient-to-r from-emerald-100 to-emerald-200",
+    },
+    sales: {
+      light: "bg-orange-50",
+      medium: "bg-orange-100",
+      dark: "bg-orange-200",
+      borderLight: "border-orange-200",
+      borderMedium: "border-orange-300",
+      gradientLight: "bg-gradient-to-r from-orange-50 to-orange-100",
+      gradientMedium: "bg-gradient-to-r from-orange-100 to-orange-200",
+    },
+  };
+
+  // Get category background color based on categoryId mapping
+  const getCategoryBackgroundColor = (categoryId: string) => {
+    const categoryMappings: Record<string, string> = {
+      leadership: "leadership",
+      "middle-management": "middle-management",
+      team: "team",
+      "team-communication": "team",
+      career: "career",
+      "career-growth": "career",
+      sales: "sales",
+      individual: "individual",
+      "individual-performance": "individual",
+    };
+
+    const mappedCategory = categoryMappings[categoryId] || categoryId;
+    return (
+      assessmentStyles[mappedCategory as keyof typeof assessmentStyles]
+        ?.cardBg || "#fafafa"
+    );
+  };
+
+  // Load category data dynamically
+  const [category, setCategory] = useState<any>(null);
+  const [archetypes, setArchetypes] = useState<AssessmentArchetype[]>([]);
+
+  // Fetch assessment data
+  useEffect(() => {
+    async function loadData() {
+      const dataFile = await getAssessmentData(categoryId);
+      if (dataFile) {
+        const categoryData = dataFile.getAssessmentCategory(categoryId);
+        const archetypeData = dataFile.getArchetypes(categoryId);
+        setCategory(categoryData);
+        setArchetypes(archetypeData);
+      }
+    }
+    loadData();
+  }, [categoryId]);
+
+  // Templated API endpoint mapping (matches AssessmentTemplate.tsx routing)
+  const getApiEndpoint = (categoryId: string) => {
+    const routingMap: Record<string, string> = {
+      leadership: "leadership",
+      "middle-management": "middle-management",
+      team: "team-communication",
+      "team-communication": "team-communication",
+      career: "career-growth",
+      "career-growth": "career-growth",
+      sales: "sales",
+      individual: "individual",
+      "individual-performance": "individual",
+    };
+    const backendCategory = routingMap[categoryId] || categoryId;
+    return `/api/${backendCategory}-assessment/latest`;
+  };
+
+  // Fetch the latest assessment result for this category
+  const apiEndpoint = getApiEndpoint(categoryId);
+  const {
+    data: result,
+    isLoading,
+    error,
+  } = useQuery<AssessmentResult>({
+    queryKey: [apiEndpoint],
+    enabled: !!user && !!category,
+  });
+
+  // Get mapped category for colors
+  const categoryMappings: Record<string, string> = {
+    leadership: "leadership",
+    "middle-management": "middle-management",
+    team: "team",
+    "team-communication": "team",
+    career: "career",
+    "career-growth": "career",
+    sales: "sales",
+    individual: "individual",
+    "individual-performance": "individual",
+  };
+  const mappedCategory = categoryMappings[categoryId] || categoryId;
+  const colors = contentColors[mappedCategory as keyof typeof contentColors] || contentColors.leadership;
+
+  if (!category) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading assessment data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading your results...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !result) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <AlertTriangle className="h-12 w-12 text-orange-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-semibold mb-4">No Results Found</h2>
+          <p className="text-muted-foreground mb-6">
+            You haven't completed the {category.name} assessment yet.
+          </p>
+          <Button onClick={() => setLocation(`/assessment/${categoryId}`)}>
+            Take Assessment
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Get the top 3 archetypes for display
+  const topThreeArchetypes = result.archetypeScores.slice(0, 3);
+  const dominantArchetype = topThreeArchetypes[0];
+
+  // Find the full archetype data for the dominant archetype
+  const dominantArchetypeData = archetypes.find(
+    (a) => a.id === dominantArchetype.archetypeId,
+  );
+
+  // Determine if we need fallback scenarios
+  const hasHighResistance = result.hasHighResistanceArchetype;
+  const allLowResistance = topThreeArchetypes.every(
+    (a) => a.resistanceLevel === "low",
+  );
+  const allModerateResistance = topThreeArchetypes.every(
+    (a) => a.resistanceLevel === "moderate",
+  );
+  const mixedLowModerate = topThreeArchetypes.every(
+    (a) => a.resistanceLevel === "low" || a.resistanceLevel === "moderate",
+  );
+
+  // Get resistance level details - Calculate from percentage if resistanceLevel is unknown
+  const actualResistanceLevel =
+    dominantArchetype.resistanceLevel === "unknown" ||
+    !dominantArchetype.resistanceLevel
+      ? getResistanceLevel(dominantArchetype.percentageScore)
+      : dominantArchetype.resistanceLevel;
+  const resistanceDetails = getResistanceLevelDetails(actualResistanceLevel);
+
+  // Icon mapping for archetypes
+  const getArchetypeIcon = (archetypeId: string) => {
+    const iconMap: Record<string, any> = {
+      perfectionist: Target,
+      control: Settings,
+      people_pleaser: Heart,
+      avoidance: RotateCcw,
+      impostor: Eye,
+      comfort_zone: Building,
+      comparison: Users,
+      overwhelm: Brain,
+    };
+    return iconMap[archetypeId] || Activity;
+  };
+
+  // Helper to get progress bar indicator color class based on level
+  const getProgressColor = (level: string) => {
+    switch (level) {
+      case "low":
+        return "bg-green-500";
+      case "moderate":
+        return "bg-yellow-500";
+      case "high":
+        return "bg-red-500";
+      default:
+        return "bg-primary";
+    }
+  };
+
+  // Render archetype detailed analysis (only for dominant archetype)
+  const renderArchetypeAnalysis = () => {
+    if (!dominantArchetypeData) {
+      return renderFallbackScenario();
+    }
+
+    return (
+      <div className="space-y-6">
+        {/* Complete MD File Narrative Structure - All 10 Required Sections */}
+
+        {/* 2. First, Know This */}
+        {dominantArchetypeData.detailedDescription && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Lightbulb className="h-5 w-5" />
+                <span>First, Know This</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={`${colors.light} ${colors.borderLight} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                <p className="text-muted-foreground leading-relaxed">
+                  {dominantArchetypeData.detailedDescription}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* 3 & 4. Core Behaviors and Root Causes - Side by Side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 3. Core Behaviors */}
+          {dominantArchetypeData.coreBehaviorsUnderResistance &&
+            dominantArchetypeData.coreBehaviorsUnderResistance.length > 0 && (
+              <Card
+                className={`${
+                  !(
+                    dominantArchetypeData.rootCauses &&
+                    dominantArchetypeData.rootCauses.length > 0
+                  )
+                    ? "md:col-span-2"
+                    : ""
+                }`}
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Activity className="h-5 w-5" />
+                    <span>Core Behaviors</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className={`${colors.gradientLight} ${colors.borderLight} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <ul className="space-y-3">
+                      {dominantArchetypeData.coreBehaviorsUnderResistance.map(
+                        (behavior, index) => (
+                          <li
+                            key={index}
+                            className="flex items-start space-x-3"
+                          >
+                            <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm">{behavior}</span>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+          {/* 4. Root Causes */}
+          {dominantArchetypeData.rootCauses &&
+            dominantArchetypeData.rootCauses.length > 0 && (
+              <Card
+                className={`${
+                  !(
+                    dominantArchetypeData.coreBehaviorsUnderResistance &&
+                    dominantArchetypeData.coreBehaviorsUnderResistance.length >
+                      0
+                  )
+                    ? "md:col-span-2"
+                    : ""
+                }`}
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Search className="h-5 w-5" />
+                    <span>Root Causes</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className={`${colors.gradientLight} ${colors.borderLight} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <ul className="space-y-3">
+                      {dominantArchetypeData.rootCauses.map((cause, index) => (
+                        <li key={index} className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="text-sm">{cause}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+        </div>
+
+        {/* 5 & 6. Beliefs and Stress Behaviors - Side by Side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 5. Beliefs (Internal Rules) */}
+          {dominantArchetypeData.beliefsThatDriveResistance &&
+            dominantArchetypeData.beliefsThatDriveResistance.length > 0 && (
+              <Card
+                className={`${
+                  !dominantArchetypeData.whatOthersExperience
+                    ? "md:col-span-2"
+                    : ""
+                }`}
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Brain className="h-5 w-5" />
+                    <span>Beliefs (Internal Rules)</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className={`${colors.gradientMedium} ${colors.borderMedium} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <ul className="space-y-3">
+                      {dominantArchetypeData.beliefsThatDriveResistance.map(
+                        (belief, index) => (
+                          <li
+                            key={index}
+                            className="flex items-start space-x-3"
+                          >
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm italic text-muted-foreground">
+                              "{belief}"
+                            </span>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+          {/* 6. Stress Behaviors (How others experience you under stress) */}
+          {dominantArchetypeData.whatOthersExperience && (
+            <Card
+              className={`${
+                !(
+                  dominantArchetypeData.beliefsThatDriveResistance &&
+                  dominantArchetypeData.beliefsThatDriveResistance.length > 0
+                )
+                  ? "md:col-span-2"
+                  : ""
+              }`}
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <AlertTriangle className="h-5 w-5" />
+                  <span>Stress Behaviors</span>
+                </CardTitle>
+                <CardDescription>
+                  How others experience you when resistance is high
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Leadership assessment fields */}
+                {dominantArchetypeData.whatOthersExperience.directReports && (
+                  <div className={`${colors.gradientMedium} ${colors.borderMedium} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <h4 className="font-semibold mb-2 flex items-center space-x-2">
+                      <Users className="h-4 w-4" />
+                      <span>Direct Reports Experience:</span>
+                    </h4>
+                    <p className="text-sm text-muted-foreground pl-6">
+                      {dominantArchetypeData.whatOthersExperience.directReports}
+                    </p>
+                  </div>
+                )}
+                {dominantArchetypeData.whatOthersExperience.peers && (
+                  <div className={`${colors.gradientMedium} ${colors.borderMedium} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <h4 className="font-semibold mb-2 flex items-center space-x-2">
+                      <User className="h-4 w-4" />
+                      <span>Peers Experience:</span>
+                    </h4>
+                    <p className="text-sm text-muted-foreground pl-6">
+                      {dominantArchetypeData.whatOthersExperience.peers}
+                    </p>
+                  </div>
+                )}
+                {dominantArchetypeData.whatOthersExperience.executivePeers && (
+                  <div className={`${colors.gradientMedium} ${colors.borderMedium} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <h4 className="font-semibold mb-2 flex items-center space-x-2">
+                      <User className="h-4 w-4" />
+                      <span>Executive Peers Experience:</span>
+                    </h4>
+                    <p className="text-sm text-muted-foreground pl-6">
+                      {
+                        dominantArchetypeData.whatOthersExperience
+                          .executivePeers
+                      }
+                    </p>
+                  </div>
+                )}
+                {dominantArchetypeData.whatOthersExperience.boardInvestors && (
+                  <div className={`${colors.gradientMedium} ${colors.borderMedium} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <h4 className="font-semibold mb-2 flex items-center space-x-2">
+                      <Building className="h-4 w-4" />
+                      <span>Board/Investors Experience:</span>
+                    </h4>
+                    <p className="text-sm text-muted-foreground pl-6">
+                      {
+                        dominantArchetypeData.whatOthersExperience
+                          .boardInvestors
+                      }
+                    </p>
+                  </div>
+                )}
+
+                {/* Sales assessment fields */}
+                {dominantArchetypeData.whatOthersExperience.customers && (
+                  <div className={`${colors.gradientMedium} ${colors.borderMedium} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <h4 className="font-semibold mb-2 flex items-center space-x-2">
+                      <Users className="h-4 w-4" />
+                      <span>Customers Experience:</span>
+                    </h4>
+                    <p className="text-sm text-muted-foreground pl-6">
+                      {dominantArchetypeData.whatOthersExperience.customers}
+                    </p>
+                  </div>
+                )}
+                {dominantArchetypeData.whatOthersExperience.managers && (
+                  <div className={`${colors.gradientMedium} ${colors.borderMedium} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <h4 className="font-semibold mb-2 flex items-center space-x-2">
+                      <Building className="h-4 w-4" />
+                      <span>Managers Experience:</span>
+                    </h4>
+                    <p className="text-sm text-muted-foreground pl-6">
+                      {dominantArchetypeData.whatOthersExperience.managers}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* 7. Situational Adaptations */}
+        {dominantArchetypeData.organizationalTriggers && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-center space-x-2">
+                <Settings className="h-5 w-5" />
+                <span>Situational Adaptations</span>
+              </CardTitle>
+              <CardDescription className="text-center">
+                Organizational contexts that affect your resistance patterns
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 text-center">
+              {dominantArchetypeData.organizationalTriggers.amplifiers &&
+                dominantArchetypeData.organizationalTriggers.amplifiers.length >
+                  0 && (
+                  <div className={`${colors.gradientMedium} ${colors.borderMedium} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <h4 className="font-semibold mb-2 flex items-center justify-center space-x-2">
+                      <TrendingUp className="h-4 w-4 text-red-500" />
+                      <span>Resistance Amplifiers:</span>
+                    </h4>
+                    <ul className="space-y-2 flex flex-col items-center">
+                      {dominantArchetypeData.organizationalTriggers.amplifiers.map(
+                        (amplifier, index) => (
+                          <li
+                            key={index}
+                            className="flex items-start space-x-2"
+                          >
+                            <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm">{amplifier}</span>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                )}
+              {dominantArchetypeData.organizationalTriggers.softeners &&
+                dominantArchetypeData.organizationalTriggers.softeners.length >
+                  0 && (
+                  <div className={`${colors.gradientMedium} ${colors.borderMedium} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <h4 className="font-semibold mb-2 flex items-center justify-center space-x-2">
+                      <TrendingDown className="h-4 w-4 text-green-500" />
+                      <span>Resistance Softeners:</span>
+                    </h4>
+                    <ul className="space-y-2 flex flex-col items-center">
+                      {dominantArchetypeData.organizationalTriggers.softeners.map(
+                        (softener, index) => (
+                          <li
+                            key={index}
+                            className="flex items-start space-x-2"
+                          >
+                            <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm">{softener}</span>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* 8 & 9. Hidden Strengths and Resistance Costs - Side by Side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 8. Hidden Strengths */}
+          {dominantArchetypeData.strengthsHiddenInside &&
+            dominantArchetypeData.strengthsHiddenInside.length > 0 && (
+              <Card
+                className={`${
+                  !(
+                    dominantArchetypeData.detailedResistanceCosts &&
+                    dominantArchetypeData.detailedResistanceCosts.length > 0
+                  )
+                    ? "md:col-span-2"
+                    : ""
+                }`}
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Gift className="h-5 w-5" />
+                    <span>Hidden Strengths</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className={`${colors.light} ${colors.borderLight} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <ul className="space-y-3">
+                      {dominantArchetypeData.strengthsHiddenInside.map(
+                        (strength, index) => (
+                          <li
+                            key={index}
+                            className="flex items-start space-x-3"
+                          >
+                            <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm">{strength}</span>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+          {/* 9. Resistance Costs */}
+          {dominantArchetypeData.detailedResistanceCosts &&
+            dominantArchetypeData.detailedResistanceCosts.length > 0 && (
+              <Card
+                className={`${
+                  !(
+                    dominantArchetypeData.strengthsHiddenInside &&
+                    dominantArchetypeData.strengthsHiddenInside.length > 0
+                  )
+                    ? "md:col-span-2"
+                    : ""
+                }`}
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <TrendingDown className="h-5 w-5" />
+                    <span>Resistance Costs</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className={`${colors.medium} ${colors.borderMedium} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <ul className="space-y-3">
+                      {dominantArchetypeData.detailedResistanceCosts.map(
+                        (cost, index) => (
+                          <li
+                            key={index}
+                            className="flex items-start space-x-3"
+                          >
+                            <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm">{cost}</span>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+        </div>
+
+        {/* 10. Growth Path */}
+        {dominantArchetypeData.growthPath && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-center space-x-2">
+                <TrendingUp className="h-5 w-5" />
+                <span>Growth Path</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 text-center">
+              {dominantArchetypeData.growthPath.immediateShifts &&
+                dominantArchetypeData.growthPath.immediateShifts.length > 0 && (
+                  <div className={`${colors.medium} ${colors.borderMedium} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <h4 className="font-semibold mb-3 flex items-center justify-center space-x-2">
+                      <Zap className="h-4 w-4 text-yellow-500" />
+                      <span>Immediate Shifts</span>
+                    </h4>
+                    <ul className="space-y-2 flex flex-col items-center">
+                      {dominantArchetypeData.growthPath.immediateShifts.map(
+                        (shift, index) => (
+                          <li
+                            key={index}
+                            className="flex items-start space-x-2"
+                          >
+                            <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm">{shift}</span>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                )}
+
+              {dominantArchetypeData.growthPath.strategicPractices &&
+                dominantArchetypeData.growthPath.strategicPractices.length >
+                  0 && (
+                  <div className={`${colors.light} ${colors.borderLight} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <h4 className="font-semibold mb-3 flex items-center justify-center space-x-2">
+                      <Target className="h-4 w-4 text-blue-500" />
+                      <span>Strategic Practices</span>{" "}
+                    </h4>
+                    <ul className="space-y-2 flex flex-col items-center">
+                      {dominantArchetypeData.growthPath.strategicPractices.map(
+                        (practice, index) => (
+                          <li
+                            key={index}
+                            className="flex items-start space-x-2"
+                          >
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm">{practice}</span>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                )}
+
+              {dominantArchetypeData.growthPath.longTermGrowth &&
+                dominantArchetypeData.growthPath.longTermGrowth.length > 0 && (
+                  <div className={`${colors.light} ${colors.borderLight} rounded-lg p-4 dark:bg-gray-800 dark:border-gray-700`}>
+                    <h4 className="font-semibold mb-3 flex items-center justify-center space-x-2">
+                      <BookOpen className="h-4 w-4 text-green-500" />
+                      <span>Long-Term Growth</span>
+                    </h4>
+                    <ul className="space-y-2 flex flex-col items-center">
+                      {dominantArchetypeData.growthPath.longTermGrowth.map(
+                        (growth, index) => (
+                          <li
+                            key={index}
+                            className="flex items-start space-x-2"
+                          >
+                            <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm">{growth}</span>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    );
+  };
+
+  // Fallback scenarios when no high resistance archetype exists
+  const renderFallbackScenario = () => {
+    let title = "";
+    let description = "";
+    let recommendations: string[] = [];
+
+    if (allLowResistance) {
+      title = "All Low Resistance Profile";
+      description =
+        "Your assessment shows consistently low resistance across all patterns. This suggests you have developed effective strategies for moving forward with less internal friction.";
+      recommendations = [
+        "Focus on leveraging your natural flow states",
+        "Consider mentoring others who struggle with resistance patterns",
+        "Explore new challenges that can utilize your momentum",
+        "Maintain awareness to prevent future resistance patterns from developing",
+      ];
+    } else if (allModerateResistance) {
+      title = "Balanced Resistance Profile";
+      description =
+        "You show moderate resistance across multiple patterns. This indicates you have some internal friction but also areas where you can move forward effectively.";
+      recommendations = [
+        "Identify your specific trigger situations",
+        "Develop targeted strategies for your moderate resistance areas",
+        "Build on areas where you feel less resistance",
+        "Consider working with a coach to optimize your approach",
+      ];
+    } else if (mixedLowModerate) {
+      title = "Mixed Low-Moderate Profile";
+      description =
+        "Your resistance patterns vary between low and moderate levels. This suggests you have good awareness and some effective strategies, with room for targeted improvement.";
+      recommendations = [
+        "Focus development efforts on your moderate resistance areas",
+        "Replicate successful strategies from low-resistance areas",
+        "Monitor for situations that trigger higher resistance",
+        "Maintain consistent practices to prevent resistance escalation",
+      ];
+    }
+
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <BarChart3 className="h-5 w-5" />
+            <span>{title}</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p>{description}</p>
+
+          <div>
+            <h4 className="font-semibold mb-2">Recommended Focus Areas:</h4>
+            <ul className="space-y-2">
+              {recommendations.map((rec, index) => (
+                <li key={index} className="flex items-start space-x-2">
+                  <Star className="h-4 w-4 text-yellow-500 mt-1 flex-shrink-0" />
+                  <span className="text-sm">{rec}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  return (
+    <div
+      className="min-h-screen"
+      style={{ backgroundColor: getCategoryBackgroundColor(categoryId) }}
+    >
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <Button
+            variant="ghost"
+            onClick={() => setLocation("/dashboard")}
+            className="flex items-center space-x-2"
+            data-testid="button-back-dashboard"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back to Dashboard</span>
+          </Button>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {category.name} Results
+            </h1>
+          </div>
+          <div></div>
+        </div>
+
+        {/* Overall Resistance Summary - Centered Content */}
+        <Card className="rounded-lg border text-card-foreground shadow-sm mb-8 bg-[#eff6ff]">
+          <CardHeader className="text-center">
+            <CardTitle className="flex items-center justify-center space-x-2 mb-2">
+              <Activity className="h-5 w-5" />
+              <span>Overall Resistance</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-col items-center space-y-2">
+              <span className="text-sm font-medium text-gray-600">
+                Total Resistance Level
+              </span>
+              <div className="flex items-center space-x-2">
+                <span className="text-lg font-bold text-primary">
+                  {result.resistancePercentage}/100
+                </span>
+                <Badge
+                  variant={
+                    getResistanceLevelDetails(result.resistanceLevel).color ===
+                    "red"
+                      ? "destructive"
+                      : getResistanceLevelDetails(result.resistanceLevel)
+                            .color === "yellow"
+                        ? "secondary"
+                        : "default"
+                  }
+                  className="text-sm"
+                >
+                  {getResistanceLevelDetails(result.resistanceLevel).label}
+                </Badge>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="relative">
+                <Progress
+                  value={result.resistancePercentage}
+                  className="w-full h-3 bg-gray-200 rounded-full"
+                  indicatorClassName={`!${getProgressColor(result.resistanceLevel)} h-3 rounded-full transition-all duration-700 ease-out`}
+                />
+                <div className="absolute inset-x-0 top-0 flex justify-center">
+                  <span className="text-xs font-medium text-foreground -translate-y-1/2 bg-background px-2 rounded-full shadow-sm">
+                    {result.resistancePercentage}%
+                  </span>
+                </div>
+              </div>
+              <p className="text-center text-sm text-muted-foreground">
+                {getResistanceLevelDetails(result.resistanceLevel).description}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Top 3 Archetypes Summary */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <BarChart3 className="h-5 w-5" />
+              <span>Your Top 3 Resistance Patterns</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              {topThreeArchetypes.map((archetype, index) => {
+                const Icon = getArchetypeIcon(archetype.archetypeId);
+                // Calculate resistance level from percentage if unknown
+                const actualLevel =
+                  archetype.resistanceLevel === "unknown" ||
+                  !archetype.resistanceLevel
+                    ? getResistanceLevel(archetype.percentageScore)
+                    : archetype.resistanceLevel;
+                const details = getResistanceLevelDetails(actualLevel);
+
+                return (
+                  <div
+                    key={archetype.archetypeId}
+                    className="p-4 border rounded-lg"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-3">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                          <Icon className="h-4 w-4 text-primary" />
+                        </div>
+                        <span className="font-medium">
+                          #{archetype.rank} {archetype.archetypeName}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-medium">
+                          {archetype.percentageScore}/100
+                        </span>
+                        <Badge
+                          variant={
+                            details.color === "red"
+                              ? "destructive"
+                              : details.color === "yellow"
+                                ? "secondary"
+                                : "default"
+                          }
+                          className="text-xs"
+                        >
+                          {details.label}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <Progress
+                        value={archetype.percentageScore}
+                        className="w-full h-3 bg-gray-200 rounded-full"
+                        indicatorClassName={`!${getProgressColor(actualLevel)} h-3 rounded-full transition-all duration-700 ease-out`}
+                      />
+                      <div className="absolute inset-x-0 top-0 flex justify-center">
+                        <span className="text-xs font-medium text-foreground -translate-y-1/2 bg-background px-2 rounded-full shadow-sm">
+                          {archetype.percentageScore}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Detailed Analysis - Only for Dominant Archetype or Fallback */}
+        {renderArchetypeAnalysis()}
+
+        {/* CTA Sections - Stacked Vertically */}
+        <div className="space-y-6 mt-8">
+          {/* Help us improve your experience */}
+          <Card className="bg-blue-50 border-blue-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-blue-700">
+                <MessageSquare className="h-5 w-5" />
+                Help us improve your experience
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  {/* Rating Section */}
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">
+                      How accurately do these results reflect your actual
+                      patterns and challenges?
+                    </Label>
+                    <div className="flex gap-2 mt-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => setRating(star)}
+                          className={`p-2 rounded-lg transition-colors ${
+                            rating >= star
+                              ? "text-blue-500"
+                              : "text-gray-300 hover:text-blue-400"
+                          }`}
+                          data-testid={`star-${star}`}
+                        >
+                          <Star className="h-5 w-5 fill-current" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Feedback Textarea */}
+                  <div>
+                    <Label
+                      htmlFor="feedback"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      What was the most valuable insight from your results?
+                      (Optional)
+                    </Label>
+                    <Textarea
+                      id="feedback"
+                      placeholder="Share what resonated most with you..."
+                      value={feedback}
+                      onChange={(e) => setFeedback(e.target.value)}
+                      className="flex min-h-[80px] w-full rounded-md border border-input px-3 py-2 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm mt-2 text-sm bg-[#fafafa]"
+                      rows={3}
+                      data-testid="textarea-feedback"
+                    />
+                  </div>
+
+                  {/* Submit Button (Using Original Logic) */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={!feedback.trim()}
+                    data-testid="button-submit-feedback"
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Submit Feedback
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Next Step: Turn Insight Into Lasting Growth CTA */}
+          <Card className="bg-green-50 border-green-200">
+            <CardHeader className="text-center">
+              <CardTitle className="text-green-700 font-bold">
+                Next Step: Turn Insight Into Lasting Growth
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 pt-2">
+              <p className="text-sm text-gray-700 leading-relaxed">
+                You now have a complete profile of your resistance patterns and
+                how they shape your performance. Awareness is powerful — but
+                real change comes from consistent practice in real-world
+                situations.
+              </p>
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-green-800 flex items-start space-x-2">
+                  <span className="mt-0.5">📌</span>
+                  <span>
+                    Short, actionable lessons designed to fit into your week.
+                  </span>
+                </p>
+                <p className="text-sm font-medium text-green-800 flex items-start space-x-2">
+                  <span className="mt-0.5">🔄</span>
+                  <span>
+                    Monthly prompts and challenges tied to your archetype
+                    results.
+                  </span>
+                </p>
+                <p className="text-sm font-medium text-green-800 flex items-start space-x-2">
+                  <span className="mt-0.5">💡</span>
+                  <span>
+                    Practical tools to reframe resistance and strengthen new
+                    habits.
+                  </span>
+                </p>
+                <p className="text-sm font-medium text-green-800 flex items-start space-x-2">
+                  <span className="mt-0.5">📈</span>
+                  <span>
+                    Guided growth path that turns awareness into measurable
+                    progress.
+                  </span>
+                </p>
+              </div>
+              <p className="text-sm font-semibold text-green-800 italic">
+                👉 Your Next Step: Enroll in the micro-learning journey and
+                start applying your insights immediately.
+              </p>
+              <Button
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+                onClick={() => setLocation("/micro-learning")} // Adjust the route as needed
+                size="lg"
+              >
+                Start My Micro-Learning Journey
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,394 @@
+Starting assessment submission...
+AssessmentTemplate.tsx:329 Assessment responses: Array(59)
+scoring-engine.ts:73 Category archetypes: Array(1)
+scoring-engine.ts:74 Initial archetype scores: Object
+scoring-engine.ts:78 Processing response: mm1 (direct) = 2
+scoring-engine.ts:183 Added 2 to archetype micromanager from numeric response
+scoring-engine.ts:78 Processing response: mm2 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype micromanager from numeric response
+scoring-engine.ts:78 Processing response: bm1 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype bottleneck-manager from numeric response
+scoring-engine.ts:78 Processing response: bm2 (direct) = 4
+scoring-engine.ts:183 Added 4 to archetype bottleneck-manager from numeric response
+scoring-engine.ts:78 Processing response: ff1 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype firefighter from numeric response
+scoring-engine.ts:78 Processing response: ff2 (direct) = 2
+scoring-engine.ts:183 Added 2 to archetype firefighter from numeric response
+scoring-engine.ts:78 Processing response: od1 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype overloaded-doer from numeric response
+scoring-engine.ts:78 Processing response: od2 (direct) = 4
+scoring-engine.ts:183 Added 4 to archetype overloaded-doer from numeric response
+scoring-engine.ts:78 Processing response: ca1 (direct) = 4
+scoring-engine.ts:183 Added 4 to archetype conflict-avoider from numeric response
+scoring-engine.ts:78 Processing response: ca2 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype conflict-avoider from numeric response
+scoring-engine.ts:78 Processing response: cs1 (direct) = 2
+scoring-engine.ts:183 Added 2 to archetype credit-seeker from numeric response
+scoring-engine.ts:78 Processing response: cs2 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype credit-seeker from numeric response
+scoring-engine.ts:78 Processing response: dm1 (direct) = 4
+scoring-engine.ts:183 Added 4 to archetype detached-manager from numeric response
+scoring-engine.ts:78 Processing response: dm2 (direct) = 4
+scoring-engine.ts:183 Added 4 to archetype detached-manager from numeric response
+scoring-engine.ts:78 Processing response: rbo1 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype rule-bound-operator from numeric response
+scoring-engine.ts:78 Processing response: rbo2 (direct) = 2
+scoring-engine.ts:183 Added 2 to archetype rule-bound-operator from numeric response
+scoring-engine.ts:78 Processing response: mm3 (oblique) = b
+scoring-engine.ts:175 Added 1 to archetype micromanager from option: Object
+scoring-engine.ts:78 Processing response: mm4 (oblique) = b
+scoring-engine.ts:175 Added 1 to archetype micromanager from option: Object
+scoring-engine.ts:78 Processing response: bm3 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype bottleneck-manager from option: Object
+scoring-engine.ts:78 Processing response: bm4 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype bottleneck-manager from option: Object
+scoring-engine.ts:78 Processing response: ff3 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype firefighter from option: Object
+scoring-engine.ts:78 Processing response: ff4 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype firefighter from option: Object
+scoring-engine.ts:78 Processing response: od3 (oblique) = c
+scoring-engine.ts:175 Added 1 to archetype overloaded-doer from option: Object
+scoring-engine.ts:78 Processing response: od4 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype overloaded-doer from option: Object
+scoring-engine.ts:78 Processing response: ca3 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype conflict-avoider from option: Object
+scoring-engine.ts:78 Processing response: ca4 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype conflict-avoider from option: Object
+scoring-engine.ts:78 Processing response: cs3 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype credit-seeker from option: Object
+scoring-engine.ts:78 Processing response: cs4 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype credit-seeker from option: Object
+scoring-engine.ts:78 Processing response: dm3 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype detached-manager from option: Object
+scoring-engine.ts:78 Processing response: dm4 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype detached-manager from option: Object
+scoring-engine.ts:78 Processing response: rbo3 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype rule-bound-operator from option: Object
+scoring-engine.ts:78 Processing response: rbo4 (oblique) = c
+scoring-engine.ts:175 Added 1 to archetype rule-bound-operator from option: Object
+scoring-engine.ts:78 Processing response: mm5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: mm6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: bm5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: bm6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: ff5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: ff6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: od5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: od6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: ca5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: ca6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: cs5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: cs6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: dm5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: dm6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: rbo5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: rbo6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: b1 (balancing) = 4
+scoring-engine.ts:78 Processing response: b2 (balancing) = 4
+scoring-engine.ts:78 Processing response: b3 (balancing) = 4
+scoring-engine.ts:78 Processing response: b4 (balancing) = 4
+scoring-engine.ts:78 Processing response: b5 (balancing) = 4
+scoring-engine.ts:78 Processing response: b6 (balancing) = 4
+scoring-engine.ts:78 Processing response: b7 (balancing) = 4
+scoring-engine.ts:78 Processing response: b8 (balancing) = 4
+scoring-engine.ts:78 Processing response: b9 (balancing) = 4
+scoring-engine.ts:78 Processing response: b10 (balancing) = 4
+scoring-engine.ts:78 Processing response: b11 (balancing) = 4
+scoring-engine.ts:98 Final archetype scores after processing responses: Object
+scoring-engine.ts:128  Failed to calculate archetype scores - insufficient data
+calculateAssessmentResults @ scoring-engine.ts:128
+AssessmentTemplate.tsx:374  Assessment submission failed: Error: Failed to calculate assessment results: insufficient archetype data
+    at calculateAssessmentResults (scoring-engine.ts:129:11)
+    at submitAssessment (AssessmentTemplate.tsx:332:32)
+    at moveToNextSection (AssessmentTemplate.tsx:308:11)
+    at nextQuestion (AssessmentTemplate.tsx:241:13)
+    at Object.onValueChange [as current] (AssessmentTemplate.tsx:433:15)
+    at use-callback-ref.tsx:15:44
+    at Object.onValueChange (use-controllable-state.tsx:27:29)
+    at onCheck (radio-group.tsx:165:34)
+    at radio.tsx:65:27
+    at handleEvent (primitive.tsx:10:14)
+submitAssessment @ AssessmentTemplate.tsx:374
+AssessmentTemplate.tsx:375  Error details: Error: Failed to calculate assessment results: insufficient archetype data
+    at calculateAssessmentResults (scoring-engine.ts:129:11)
+    at submitAssessment (AssessmentTemplate.tsx:332:32)
+    at moveToNextSection (AssessmentTemplate.tsx:308:11)
+    at nextQuestion (AssessmentTemplate.tsx:241:13)
+    at Object.onValueChange [as current] (AssessmentTemplate.tsx:433:15)
+    at use-callback-ref.tsx:15:44
+    at Object.onValueChange (use-controllable-state.tsx:27:29)
+    at onCheck (radio-group.tsx:165:34)
+    at radio.tsx:65:27
+    at handleEvent (primitive.tsx:10:14)
+submitAssessment @ AssessmentTemplate.tsx:375
+AssessmentTemplate.tsx:377  Error message: Failed to calculate assessment results: insufficient archetype data
+submitAssessment @ AssessmentTemplate.tsx:377
+AssessmentTemplate.tsx:378  Error stack: Error: Failed to calculate assessment results: insufficient archetype data
+    at calculateAssessmentResults (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/src/lib/paid-assessments/templates/scoring-engine.ts:57:11)
+    at submitAssessment (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/src/lib/paid-assessments/templates/AssessmentTemplate.tsx:310:32)
+    at moveToNextSection (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/src/lib/paid-assessments/templates/AssessmentTemplate.tsx:295:11)
+    at nextQuestion (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/src/lib/paid-assessments/templates/AssessmentTemplate.tsx:244:13)
+    at Object.onValueChange [as current] (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/src/lib/paid-assessments/templates/AssessmentTemplate.tsx:397:15)
+    at https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5RH5Y25I.js?v=3b484348:35:61
+    at Object.onValueChange (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5RH5Y25I.js?v=3b484348:56:30)
+    at onCheck (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-radio-group.js?v=3b484348:504:36)
+    at https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-radio-group.js?v=3b484348:312:54
+    at handleEvent (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5RH5Y25I.js?v=3b484348:16:49)
+submitAssessment @ AssessmentTemplate.tsx:378
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
+AssessmentTemplate.tsx:318 Starting assessment submission...
+AssessmentTemplate.tsx:329 Assessment responses: (60) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+scoring-engine.ts:73 Category archetypes: [{…}]
+scoring-engine.ts:74 Initial archetype scores: {micromanager: 0}
+scoring-engine.ts:78 Processing response: mm1 (direct) = 2
+scoring-engine.ts:183 Added 2 to archetype micromanager from numeric response
+scoring-engine.ts:78 Processing response: mm2 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype micromanager from numeric response
+scoring-engine.ts:78 Processing response: bm1 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype bottleneck-manager from numeric response
+scoring-engine.ts:78 Processing response: bm2 (direct) = 4
+scoring-engine.ts:183 Added 4 to archetype bottleneck-manager from numeric response
+scoring-engine.ts:78 Processing response: ff1 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype firefighter from numeric response
+scoring-engine.ts:78 Processing response: ff2 (direct) = 2
+scoring-engine.ts:183 Added 2 to archetype firefighter from numeric response
+scoring-engine.ts:78 Processing response: od1 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype overloaded-doer from numeric response
+scoring-engine.ts:78 Processing response: od2 (direct) = 4
+scoring-engine.ts:183 Added 4 to archetype overloaded-doer from numeric response
+scoring-engine.ts:78 Processing response: ca1 (direct) = 4
+scoring-engine.ts:183 Added 4 to archetype conflict-avoider from numeric response
+scoring-engine.ts:78 Processing response: ca2 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype conflict-avoider from numeric response
+scoring-engine.ts:78 Processing response: cs1 (direct) = 2
+scoring-engine.ts:183 Added 2 to archetype credit-seeker from numeric response
+scoring-engine.ts:78 Processing response: cs2 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype credit-seeker from numeric response
+scoring-engine.ts:78 Processing response: dm1 (direct) = 4
+scoring-engine.ts:183 Added 4 to archetype detached-manager from numeric response
+scoring-engine.ts:78 Processing response: dm2 (direct) = 4
+scoring-engine.ts:183 Added 4 to archetype detached-manager from numeric response
+scoring-engine.ts:78 Processing response: rbo1 (direct) = 3
+scoring-engine.ts:183 Added 3 to archetype rule-bound-operator from numeric response
+scoring-engine.ts:78 Processing response: rbo2 (direct) = 2
+scoring-engine.ts:183 Added 2 to archetype rule-bound-operator from numeric response
+scoring-engine.ts:78 Processing response: mm3 (oblique) = b
+scoring-engine.ts:175 Added 1 to archetype micromanager from option: {value: 'b', label: 'Trust the team to manage independently', archetypeScore: 1}
+scoring-engine.ts:78 Processing response: mm4 (oblique) = b
+scoring-engine.ts:175 Added 1 to archetype micromanager from option: {value: 'b', label: 'Allow the team to self-organize', archetypeScore: 1}
+scoring-engine.ts:78 Processing response: bm3 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype bottleneck-manager from option: {value: 'c', label: 'Escalate upward quickly', archetypeScore: 3}
+scoring-engine.ts:78 Processing response: bm4 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype bottleneck-manager from option: {value: 'c', label: 'Let the team decide independently', archetypeScore: 3}
+scoring-engine.ts:78 Processing response: ff3 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype firefighter from option: {value: 'c', label: 'Step back and let others take over', archetypeScore: 3}
+scoring-engine.ts:78 Processing response: ff4 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype firefighter from option: {value: 'c', label: 'Focus on recognition opportunities', archetypeScore: 3}
+scoring-engine.ts:78 Processing response: od3 (oblique) = c
+scoring-engine.ts:175 Added 1 to archetype overloaded-doer from option: {value: 'c', label: 'Let them find their own solution', archetypeScore: 1}
+scoring-engine.ts:78 Processing response: od4 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype overloaded-doer from option: {value: 'c', label: 'Build visibility through recognition', archetypeScore: 3}
+scoring-engine.ts:78 Processing response: ca3 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype conflict-avoider from option: {value: 'c', label: 'Escalate immediately', archetypeScore: 3}
+scoring-engine.ts:78 Processing response: ca4 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype conflict-avoider from option: {value: 'c', label: 'Use humor to lighten the mood', archetypeScore: 3}
+scoring-engine.ts:78 Processing response: cs3 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype credit-seeker from option: {value: 'c', label: 'Focus on group harmony', archetypeScore: 3}
+scoring-engine.ts:78 Processing response: cs4 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype credit-seeker from option: {value: 'c', label: 'Avoid taking any credit', archetypeScore: 3}
+scoring-engine.ts:78 Processing response: dm3 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype detached-manager from option: {value: 'c', label: 'Take on extra tasks to prove my value', archetypeScore: 3}
+scoring-engine.ts:78 Processing response: dm4 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype detached-manager from option: {value: 'c', label: 'Push to be recognized', archetypeScore: 3}
+scoring-engine.ts:78 Processing response: rbo3 (oblique) = c
+scoring-engine.ts:175 Added 3 to archetype rule-bound-operator from option: {value: 'c', label: 'Step back until clarity is restored', archetypeScore: 3}
+scoring-engine.ts:78 Processing response: rbo4 (oblique) = c
+scoring-engine.ts:175 Added 1 to archetype rule-bound-operator from option: {value: 'c', label: 'Trust people to figure it out creatively', archetypeScore: 1}
+scoring-engine.ts:78 Processing response: mm5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: mm6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: bm5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: bm6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: ff5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: ff6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: od5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: od6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: ca5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: ca6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: cs5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: cs6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: dm5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: dm6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: rbo5 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: rbo6 (forced-choice) = [object Object]
+scoring-engine.ts:78 Processing response: b1 (balancing) = 4
+scoring-engine.ts:78 Processing response: b2 (balancing) = 4
+scoring-engine.ts:78 Processing response: b3 (balancing) = 4
+scoring-engine.ts:78 Processing response: b4 (balancing) = 4
+scoring-engine.ts:78 Processing response: b5 (balancing) = 4
+scoring-engine.ts:78 Processing response: b6 (balancing) = 4
+scoring-engine.ts:78 Processing response: b7 (balancing) = 4
+scoring-engine.ts:78 Processing response: b8 (balancing) = 4
+scoring-engine.ts:78 Processing response: b9 (balancing) = 4
+scoring-engine.ts:78 Processing response: b10 (balancing) = 4
+scoring-engine.ts:78 Processing response: b11 (balancing) = 4
+scoring-engine.ts:78 Processing response: b12 (balancing) = 3
+scoring-engine.ts:98 Final archetype scores after processing responses: {micromanager: 12, bottleneck-manager: NaN, firefighter: NaN, overloaded-doer: NaN, conflict-avoider: NaN, …}
+scoring-engine.ts:128  Failed to calculate archetype scores - insufficient data
+calculateAssessmentResults @ scoring-engine.ts:128
+submitAssessment @ AssessmentTemplate.tsx:332
+moveToNextSection @ AssessmentTemplate.tsx:308
+nextQuestion @ AssessmentTemplate.tsx:241
+onValueChange @ AssessmentTemplate.tsx:433
+(anonymous) @ use-callback-ref.tsx:15
+(anonymous) @ use-controllable-state.tsx:27
+onCheck @ radio-group.tsx:165
+(anonymous) @ radio.tsx:65
+handleEvent @ primitive.tsx:10
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+AssessmentTemplate.tsx:374  Assessment submission failed: Error: Failed to calculate assessment results: insufficient archetype data
+    at calculateAssessmentResults (scoring-engine.ts:129:11)
+    at submitAssessment (AssessmentTemplate.tsx:332:32)
+    at moveToNextSection (AssessmentTemplate.tsx:308:11)
+    at nextQuestion (AssessmentTemplate.tsx:241:13)
+    at Object.onValueChange [as current] (AssessmentTemplate.tsx:433:15)
+    at use-callback-ref.tsx:15:44
+    at Object.onValueChange (use-controllable-state.tsx:27:29)
+    at onCheck (radio-group.tsx:165:34)
+    at radio.tsx:65:27
+    at handleEvent (primitive.tsx:10:14)
+submitAssessment @ AssessmentTemplate.tsx:374
+moveToNextSection @ AssessmentTemplate.tsx:308
+nextQuestion @ AssessmentTemplate.tsx:241
+onValueChange @ AssessmentTemplate.tsx:433
+(anonymous) @ use-callback-ref.tsx:15
+(anonymous) @ use-controllable-state.tsx:27
+onCheck @ radio-group.tsx:165
+(anonymous) @ radio.tsx:65
+handleEvent @ primitive.tsx:10
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+AssessmentTemplate.tsx:375  Error details: Error: Failed to calculate assessment results: insufficient archetype data
+    at calculateAssessmentResults (scoring-engine.ts:129:11)
+    at submitAssessment (AssessmentTemplate.tsx:332:32)
+    at moveToNextSection (AssessmentTemplate.tsx:308:11)
+    at nextQuestion (AssessmentTemplate.tsx:241:13)
+    at Object.onValueChange [as current] (AssessmentTemplate.tsx:433:15)
+    at use-callback-ref.tsx:15:44
+    at Object.onValueChange (use-controllable-state.tsx:27:29)
+    at onCheck (radio-group.tsx:165:34)
+    at radio.tsx:65:27
+    at handleEvent (primitive.tsx:10:14)
+submitAssessment @ AssessmentTemplate.tsx:375
+moveToNextSection @ AssessmentTemplate.tsx:308
+nextQuestion @ AssessmentTemplate.tsx:241
+onValueChange @ AssessmentTemplate.tsx:433
+(anonymous) @ use-callback-ref.tsx:15
+(anonymous) @ use-controllable-state.tsx:27
+onCheck @ radio-group.tsx:165
+(anonymous) @ radio.tsx:65
+handleEvent @ primitive.tsx:10
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+AssessmentTemplate.tsx:377  Error message: Failed to calculate assessment results: insufficient archetype data
+submitAssessment @ AssessmentTemplate.tsx:377
+moveToNextSection @ AssessmentTemplate.tsx:308
+nextQuestion @ AssessmentTemplate.tsx:241
+onValueChange @ AssessmentTemplate.tsx:433
+(anonymous) @ use-callback-ref.tsx:15
+(anonymous) @ use-controllable-state.tsx:27
+onCheck @ radio-group.tsx:165
+(anonymous) @ radio.tsx:65
+handleEvent @ primitive.tsx:10
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+AssessmentTemplate.tsx:378  Error stack: Error: Failed to calculate assessment results: insufficient archetype data
+    at calculateAssessmentResults (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/src/lib/paid-assessments/templates/scoring-engine.ts:57:11)
+    at submitAssessment (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/src/lib/paid-assessments/templates/AssessmentTemplate.tsx:310:32)
+    at moveToNextSection (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/src/lib/paid-assessments/templates/AssessmentTemplate.tsx:295:11)
+    at nextQuestion (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/src/lib/paid-assessments/templates/AssessmentTemplate.tsx:244:13)
+    at Object.onValueChange [as current] (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/src/lib/paid-assessments/templates/AssessmentTemplate.tsx:397:15)
+    at https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5RH5Y25I.js?v=3b484348:35:61
+    at Object.onValueChange (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5RH5Y25I.js?v=3b484348:56:30)
+    at onCheck (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-radio-group.js?v=3b484348:504:36)
+    at https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-radio-group.js?v=3b484348:312:54
+    at handleEvent (https://aa7225ef-ebd3-4763-beb1-a76e7eb513d0-00-ktlwu4cjj97p.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5RH5Y25I.js?v=3b484348:16:49)
+submitAssessment @ AssessmentTemplate.tsx:378
+moveToNextSection @ AssessmentTemplate.tsx:308
+nextQuestion @ AssessmentTemplate.tsx:241
+onValueChange @ AssessmentTemplate.tsx:433
+(anonymous) @ use-callback-ref.tsx:15
+(anonymous) @ use-controllable-state.tsx:27
+onCheck @ radio-group.tsx:165
+(anonymous) @ radio.tsx:65
+handleEvent @ primitive.tsx:10
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430

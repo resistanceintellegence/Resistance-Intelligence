@@ -1,0 +1,958 @@
+// Generic Assessment Template Component
+// This template handles the UI and logic for any assessment category
+
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, CheckCircle } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  getAssessmentCategory as getLeadershipCategory,
+  getAllQuestions as getAllLeadershipQuestions,
+  getForcedChoiceBlocks as getLeadershipForcedChoiceBlocks,
+  type AssessmentCategory,
+  type AssessmentQuestion,
+  type ForcedChoiceBlock,
+} from "../data/leadership-data";
+import {
+  getAssessmentCategory as getMiddleManagementCategory,
+  getAllQuestions as getAllMiddleManagementQuestions,
+  getForcedChoiceBlocks as getMiddleManagementForcedChoiceBlocks,
+} from "../data/middle_management-data";
+import {
+  calculateAssessmentResults,
+  type AssessmentResponse,
+  type AssessmentResult,
+} from "./scoring-engine";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+
+// OptionBox component for styled question options
+interface OptionBoxProps {
+  value: string;
+  id: string;
+  children: React.ReactNode;
+  testId: string;
+  disabled?: boolean;
+}
+
+function OptionBox({
+  value,
+  id,
+  children,
+  testId,
+  disabled = false,
+}: OptionBoxProps) {
+  return (
+    <div className="relative">
+      <RadioGroupItem
+        value={value}
+        id={id}
+        className="sr-only peer"
+        disabled={disabled}
+        data-testid={testId}
+      />
+      <Label
+        htmlFor={id}
+        className={`
+          block w-full cursor-pointer rounded-lg border p-4 h-16 
+          flex items-center justify-center text-center transition-all duration-200
+          hover:bg-blue-100 dark:hover:bg-blue-800 
+          hover:border-blue-500 dark:hover:border-blue-400 
+          hover:text-blue-900 dark:hover:text-white 
+          hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02]
+          peer-checked:bg-primary/15 peer-checked:border-primary peer-checked:shadow-md peer-checked:scale-[1.01]
+          peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40
+          ${disabled ? "opacity-50 cursor-not-allowed hover:transform-none hover:shadow-none" : ""}
+        `}
+      >
+        {children}
+      </Label>
+    </div>
+  );
+}
+
+type AssessmentPhase = "category" | "intro" | "assessment" | "results";
+type CurrentSection =
+  | "direct"
+  | "oblique"
+  | "scenario"
+  | "forced-choice"
+  | "balancing";
+
+type OrganizationCategory = "corporate" | "midSize" | "smb" | "entrepreneur";
+type EntrepreneurSubcategory = "sole" | "micro" | "growing";
+
+interface AssessmentTemplateProps {
+  categoryId: string;
+}
+
+export default function AssessmentTemplate({
+  categoryId,
+}: AssessmentTemplateProps) {
+  const [, setLocation] = useLocation();
+  const { user } = useAuth();
+
+  // Load category data - conditional import based on assessment type
+  const getAssessmentCategory = categoryId === "middle-management" ? getMiddleManagementCategory : getLeadershipCategory;
+  const getAllQuestions = categoryId === "middle-management" ? getAllMiddleManagementQuestions : getAllLeadershipQuestions;
+  const getForcedChoiceBlocks = categoryId === "middle-management" ? getMiddleManagementForcedChoiceBlocks : getLeadershipForcedChoiceBlocks;
+  
+  const category = getAssessmentCategory(categoryId);
+  const allQuestions = getAllQuestions(categoryId);
+  const forcedChoiceBlocks = getForcedChoiceBlocks(categoryId);
+
+  // State management
+  const [phase, setPhase] = useState<AssessmentPhase>("category");
+  const [currentSection, setCurrentSection] =
+    useState<CurrentSection>("direct");
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [responses, setResponses] = useState<Record<string, any>>({});
+  const [forcedChoiceSelections, setForcedChoiceSelections] = useState<
+    Record<string, { mostLikeMe: number; leastLikeMe: number }>
+  >({});
+  const [organizationCategory, setOrganizationCategory] =
+    useState<OrganizationCategory | null>(null);
+  const [entrepreneurSubcategory, setEntrepreneurSubcategory] =
+    useState<EntrepreneurSubcategory | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (!category) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+        <Card className="max-w-md">
+          <CardHeader>
+            <CardTitle>Assessment Not Found</CardTitle>
+            <CardDescription>
+              The requested assessment category could not be found.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              onClick={() => setLocation("/dashboard")}
+              className="w-full"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Get current section questions
+  const getCurrentSectionQuestions = () => {
+    switch (currentSection) {
+      case "direct":
+        return category.questions.direct;
+      case "oblique":
+        return category.questions.oblique;
+      case "scenario":
+        return category.questions.scenario;
+      case "balancing":
+        return category.questions.balancing;
+      case "forced-choice":
+        return forcedChoiceBlocks;
+      default:
+        return [];
+    }
+  };
+
+  const currentSectionQuestions = getCurrentSectionQuestions();
+  const totalQuestions =
+    category.questions.direct.length +
+    category.questions.oblique.length +
+    category.questions.scenario.length +
+    forcedChoiceBlocks.length +
+    category.questions.balancing.length;
+
+  // Calculate overall progress
+  const getCompletedQuestions = () => {
+    const sections = [
+      "direct",
+      "oblique",
+      "scenario",
+      "forced-choice",
+      "balancing",
+    ] as const;
+    let completed = 0;
+
+    sections.forEach((section) => {
+      if (section === currentSection) {
+        completed += currentQuestionIndex;
+      } else {
+        const sectionQuestions =
+          section === "forced-choice"
+            ? forcedChoiceBlocks
+            : category.questions[section];
+        const shouldCount =
+          sections.indexOf(section) < sections.indexOf(currentSection);
+        if (shouldCount) {
+          completed += sectionQuestions.length;
+        }
+      }
+    });
+
+    return completed;
+  };
+
+  const progress = Math.round((getCompletedQuestions() / totalQuestions) * 100);
+
+  // Handle responses
+  const handleResponse = (
+    questionId: string,
+    response: any,
+    questionType: string,
+  ) => {
+    // Convert string responses to numbers only for Likert scale questions (numeric strings)
+    let processedResponse = response;
+    if (
+      (questionType === "direct" ||
+        questionType === "oblique" ||
+        questionType === "balancing") &&
+      typeof response === "string" &&
+      /^\d+$/.test(response) // Only convert if it's a numeric string
+    ) {
+      processedResponse = parseInt(response);
+    }
+
+    setResponses((prev) => ({
+      ...prev,
+      [questionId]: { response: processedResponse, questionType },
+    }));
+  };
+
+  // Navigation
+  const nextQuestion = async () => {
+    if (currentQuestionIndex < currentSectionQuestions.length - 1) {
+      setCurrentQuestionIndex((prev) => prev + 1);
+    } else {
+      await moveToNextSection();
+    }
+  };
+
+  const previousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prev) => prev - 1);
+    } else {
+      moveToPreviousSection();
+    }
+  };
+
+  const moveToPreviousSection = () => {
+    const sections: CurrentSection[] = [
+      "direct",
+      "oblique",
+      "scenario",
+      "forced-choice",
+      "balancing",
+    ];
+    const currentIndex = sections.indexOf(currentSection);
+
+    // Find the previous section that has questions
+    let previousSectionIndex = currentIndex - 1;
+    while (previousSectionIndex >= 0) {
+      const previousSection = sections[previousSectionIndex];
+      const previousSectionQuestions =
+        previousSection === "forced-choice"
+          ? forcedChoiceBlocks
+          : category.questions[previousSection];
+      
+      if (previousSectionQuestions.length > 0) {
+        setCurrentSection(previousSection);
+        setCurrentQuestionIndex(previousSectionQuestions.length - 1);
+        return;
+      }
+      previousSectionIndex--;
+    }
+  };
+
+  const moveToNextSection = async () => {
+    const sections: CurrentSection[] = [
+      "direct",
+      "oblique",
+      "scenario",
+      "forced-choice",
+      "balancing",
+    ];
+    const currentIndex = sections.indexOf(currentSection);
+
+    // Find the next section that has questions
+    let nextSectionIndex = currentIndex + 1;
+    while (nextSectionIndex < sections.length) {
+      const nextSection = sections[nextSectionIndex];
+      const nextSectionQuestions = nextSection === "forced-choice" 
+        ? forcedChoiceBlocks 
+        : category.questions[nextSection];
+      
+      if (nextSectionQuestions.length > 0) {
+        setCurrentSection(nextSection);
+        setCurrentQuestionIndex(0);
+        return;
+      }
+      nextSectionIndex++;
+    }
+
+    // If no more sections with questions, submit assessment
+    await submitAssessment();
+  };
+
+  // Submit assessment
+  const submitAssessment = async () => {
+    if (!user) return;
+
+    setIsSubmitting(true);
+
+    try {
+      console.log("Starting assessment submission...");
+
+      // Convert responses to the expected format
+      const assessmentResponses: AssessmentResponse[] = Object.entries(
+        responses,
+      ).map(([questionId, data]) => ({
+        questionId,
+        response: data.response,
+        questionType: data.questionType,
+      }));
+
+      console.log("Assessment responses:", assessmentResponses);
+
+      // Calculate results using the scoring engine
+      const calculatedResult = calculateAssessmentResults(
+        categoryId,
+        assessmentResponses,
+      );
+
+      console.log("Calculated result:", calculatedResult);
+
+      // Prepare submission data
+      const submissionData = {
+        responses: assessmentResponses,
+        archetypeScores: calculatedResult.archetypeScores,
+        dominantArchetype: calculatedResult.dominantArchetype.archetypeId,
+        secondaryArchetype: calculatedResult.secondaryArchetype.archetypeId,
+        insights: calculatedResult.insights,
+        developmentAreas: calculatedResult.developmentAreas,
+        totalQuestions: calculatedResult.totalQuestions,
+        resistanceLevel: calculatedResult.resistanceLevel,
+        resistancePercentage: calculatedResult.resistancePercentage,
+        organizationCategory,
+        entrepreneurSubcategory,
+      };
+
+      console.log("Submission data:", submissionData);
+
+      // Save to backend - use correct endpoint based on assessment type
+      const apiEndpoint = categoryId === "middle-management" ? "/api/middle-management-assessment" : "/api/leadership-assessment";
+      const result = await apiRequest(
+        "POST",
+        apiEndpoint,
+        submissionData,
+      );
+
+      console.log("Server response:", result);
+
+      // Invalidate the cache for latest results to ensure fresh data is fetched
+      await queryClient.invalidateQueries({
+        queryKey: [`${apiEndpoint}/latest`],
+      });
+
+      // Directly redirect to results page
+      setLocation(`/results/${categoryId}`);
+    } catch (error) {
+      console.error("Assessment submission failed:", error);
+      console.error("Error details:", error);
+      if (error instanceof Error) {
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+      }
+      alert("Failed to submit assessment. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Render current question based on type and available options
+  const renderCurrentQuestion = () => {
+    if (currentSection === "forced-choice") {
+      return renderForcedChoiceQuestion();
+    }
+
+    const question = currentSectionQuestions[
+      currentQuestionIndex
+    ] as AssessmentQuestion;
+    if (!question) return null;
+
+    // Check if question has custom options - if so, render as custom options regardless of type
+    if (question.options && question.options.length > 0) {
+      return renderCustomOptionsQuestion(question);
+    }
+
+    // Otherwise use type-based rendering for standard questions
+    switch (question.type) {
+      case "direct":
+      case "oblique":
+      case "balancing":
+        return renderLikertQuestion(question);
+      case "scenario":
+        return renderScenarioQuestion(question);
+      default:
+        return null;
+    }
+  };
+
+  // Render Likert scale questions
+  const renderLikertQuestion = (question: AssessmentQuestion) => {
+    const currentResponse = responses[question.id]?.response;
+
+    return (
+      <Card className="w-full max-w-4xl">
+        <CardHeader>
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {question.text}
+            </h1>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup
+            value={currentResponse?.toString() || ""}
+            onValueChange={(value) => {
+              handleResponse(question.id, parseInt(value), question.type);
+              nextQuestion();
+            }}
+          >
+            <div className="grid gap-3">
+              {[
+                { value: "1", label: "Strongly Disagree" },
+                { value: "2", label: "Disagree" },
+                { value: "3", label: "Neutral" },
+                { value: "4", label: "Agree" },
+                { value: "5", label: "Strongly Agree" },
+              ].map((option) => (
+                <OptionBox
+                  key={option.value}
+                  value={option.value}
+                  id={`likert-${question.id}-${option.value}`}
+                  testId={`option-${option.value}`}
+                >
+                  {option.label}
+                </OptionBox>
+              ))}
+            </div>
+          </RadioGroup>
+
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={previousQuestion}
+              data-testid="button-previous"
+              disabled={
+                currentQuestionIndex === 0 && currentSection === "direct"
+              }
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary hover:bg-primary/10 hover:border hover:border-primary/20 hover:rounded-lg px-3 py-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-transparent disabled:hover:text-gray-400"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Previous
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  // Render scenario questions
+  const renderScenarioQuestion = (question: AssessmentQuestion) => {
+    const currentResponse = responses[question.id]?.response;
+
+    return (
+      <Card className="w-full max-w-4xl">
+        <CardHeader>
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {question.text}
+            </h1>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup
+            value={currentResponse || ""}
+            onValueChange={(value) => {
+              handleResponse(question.id, value, "scenario");
+              nextQuestion();
+            }}
+          >
+            <div className="grid gap-3">
+              {question.options?.map((option) => (
+                <OptionBox
+                  key={option.value}
+                  value={option.value}
+                  id={`scenario-${question.id}-${option.value}`}
+                  testId={`option-${option.value}`}
+                >
+                  {option.text}
+                </OptionBox>
+              ))}
+            </div>
+          </RadioGroup>
+
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={previousQuestion}
+              data-testid="button-previous"
+              disabled={
+                currentQuestionIndex === 0 && currentSection === "direct"
+              }
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary hover:bg-primary/10 hover:border hover:border-primary/20 hover:rounded-lg px-3 py-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-transparent disabled:hover:text-gray-400"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Previous
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  // Render questions with custom options (oblique questions with predefined choices)
+  const renderCustomOptionsQuestion = (question: AssessmentQuestion) => {
+    const currentResponse = responses[question.id]?.response;
+
+    return (
+      <Card className="w-full max-w-4xl">
+        <CardHeader>
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {question.text}
+            </h1>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup
+            value={currentResponse || ""}
+            onValueChange={(value) => {
+              handleResponse(question.id, value, question.type);
+              nextQuestion();
+            }}
+          >
+            <div className="grid gap-3">
+              {question.options?.map((option) => (
+                <OptionBox
+                  key={option.value}
+                  value={option.value}
+                  id={`custom-${question.id}-${option.value}`}
+                  testId={`option-${option.value}`}
+                >
+                  {(option as any).label || (option as any).text}
+                </OptionBox>
+              ))}
+            </div>
+          </RadioGroup>
+
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={previousQuestion}
+              data-testid="button-previous"
+              disabled={
+                currentQuestionIndex === 0 && currentSection === "direct"
+              }
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary hover:bg-primary/10 hover:border hover:border-primary/20 hover:rounded-lg px-3 py-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-transparent disabled:hover:text-gray-400"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Previous
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  // Render forced choice questions
+  const renderForcedChoiceQuestion = () => {
+    const block = forcedChoiceBlocks[currentQuestionIndex];
+    if (!block) return null;
+
+    const currentSelection = forcedChoiceSelections[block.id] || {
+      mostLikeMe: -1,
+      leastLikeMe: -1,
+    };
+    const { mostLikeMe, leastLikeMe } = currentSelection;
+
+    const updateForcedChoice = (
+      type: "mostLikeMe" | "leastLikeMe",
+      statementIndex: number,
+    ) => {
+      const newSelection = { ...currentSelection, [type]: statementIndex };
+      setForcedChoiceSelections((prev) => ({
+        ...prev,
+        [block.id]: newSelection,
+      }));
+
+      if (
+        newSelection.mostLikeMe !== -1 &&
+        newSelection.leastLikeMe !== -1 &&
+        newSelection.mostLikeMe !== newSelection.leastLikeMe
+      ) {
+        // Convert indices back to archetype values for storage
+        const mostLikeStatement = block.statements[newSelection.mostLikeMe];
+        const leastLikeStatement = block.statements[newSelection.leastLikeMe];
+        const responseData = {
+          mostLikeMe: mostLikeStatement.archetype,
+          leastLikeMe: leastLikeStatement.archetype,
+        };
+        handleResponse(block.id, responseData, "forced-choice");
+        nextQuestion(); // auto-advance
+      }
+    };
+
+    return (
+      <Card className="w-full max-w-4xl">
+        <CardHeader>
+          <div className="text-center mb-6">
+            <div className="text-lg font-medium text-primary mb-2">
+              Forced Choice
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              Choose "Most Like Me" and "Least Like Me"
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">
+              Select one statement that is most like you and one that is least
+              like you.
+            </p>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4">
+            {block.statements.map((statement, index) => (
+              <div key={index} className="border rounded-lg p-4">
+                <p className="mb-3 text-sm">{statement.text}</p>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => updateForcedChoice("mostLikeMe", index)}
+                    className={`px-4 py-2 rounded-lg border transition-all duration-200 text-sm font-medium ${
+                      mostLikeMe === index
+                        ? "bg-green-100 border-green-500 text-green-700 dark:bg-green-900/30 dark:border-green-400 dark:text-green-300"
+                        : "bg-gray-50 border-gray-300 text-gray-700 hover:bg-green-50 hover:border-green-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-green-900/20"
+                    }`}
+                    data-testid={`most-like-${index}`}
+                  >
+                    Most Like Me
+                  </button>
+                  <button
+                    onClick={() => updateForcedChoice("leastLikeMe", index)}
+                    className={`px-4 py-2 rounded-lg border transition-all duration-200 text-sm font-medium ${
+                      leastLikeMe === index
+                        ? "bg-red-100 border-red-500 text-red-700 dark:bg-red-900/30 dark:border-red-400 dark:text-red-300"
+                        : "bg-gray-50 border-gray-300 text-gray-700 hover:bg-red-50 hover:border-red-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-red-900/20"
+                    }`}
+                    data-testid={`least-like-${index}`}
+                  >
+                    Least Like Me
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={previousQuestion}
+              data-testid="button-previous"
+              disabled={
+                currentQuestionIndex === 0 && currentSection === "direct"
+              }
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary hover:bg-primary/10 hover:border hover:border-primary/20 hover:rounded-lg px-3 py-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-transparent disabled:hover:text-gray-400"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Previous
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  if (isSubmitting) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+        <Card className="max-w-md">
+          <CardContent className="pt-6">
+            <div className="text-center space-y-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+              <div>
+                <h3 className="font-semibold">Processing Your Results</h3>
+                <p className="text-sm text-muted-foreground">
+                  Analyzing your responses and generating personalized
+                  insights...
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // // Intro phase
+  // if (phase === "intro") {
+  //   return (
+  //     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
+  //       <div className="max-w-4xl mx-auto space-y-6">
+  //         <div className="text-center mb-8">
+  //           <h1 className="text-3xl font-bold mb-4">{category.name}</h1>
+  //           <p className="text-xl text-gray-600 dark:text-gray-400">
+  //             {category.description}
+  //           </p>
+  //         </div>
+
+  //         <Card className="w-full max-w-4xl">
+  //           <CardContent className="pt-6">
+  //             <div className="space-y-6">
+  //               <div className="text-center">
+  //                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary font-medium mb-4">
+  //                   <CheckCircle className="h-4 w-4" />
+  //                   {totalQuestions} Questions
+  //                 </div>
+  //                 <p className="text-gray-600 dark:text-gray-400">
+  //                   This assessment will help identify your leadership patterns and provide personalized insights.
+  //                 </p>
+  //               </div>
+
+  //               <div className="flex justify-center gap-4">
+  //                 <Button
+  //                   onClick={() => setPhase("category")}
+  //                   variant="outline"
+  //                   data-testid="button-back-category"
+  //                 >
+  //                   <ArrowLeft className="h-4 w-4 mr-2" />
+  //                   Change Organization
+  //                 </Button>
+  //                 <Button
+  //                   onClick={() => setPhase("assessment")}
+  //                   data-testid="button-start-assessment"
+  //                 >
+  //                   Start Assessment
+  //                 </Button>
+  //               </div>
+  //             </div>
+  //           </CardContent>
+  //         </Card>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+  // Category selection phase
+  if (phase === "category") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <span className="text-lg">🏢</span>
+              <h1 className="text-xl font-semibold">Organization Type</h1>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400">
+              Tell us about your organization to personalize your results
+            </p>
+          </div>
+
+          <Card className="w-full max-w-4xl">
+            <CardHeader>
+              <h2 className="text-xl font-bold text-center">
+                What best describes your organization?
+              </h2>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3">
+                {[
+                  {
+                    value: "corporate",
+                    label: "Corporate (500+ employees)",
+                    description: "Large enterprise organization",
+                  },
+                  {
+                    value: "midSize",
+                    label: "Mid-Size Company (50-500 employees)",
+                    description: "Established growing business",
+                  },
+                  {
+                    value: "smb",
+                    label: "Small Business (20-50 employees)",
+                    description: "Small to medium business",
+                  },
+                  {
+                    value: "entrepreneur",
+                    label: "Entrepreneur",
+                    description: "Startup or self-employed",
+                  },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => {
+                      const category = option.value as OrganizationCategory;
+                      setOrganizationCategory(category);
+                      if (category === "entrepreneur") {
+                        // Don't proceed yet, need to select subcategory
+                      } else {
+                        setPhase("assessment");
+                      }
+                    }}
+                    className={`p-4 border-2 rounded-lg text-left transition-all hover:border-primary ${
+                      organizationCategory === option.value
+                        ? "border-primary bg-primary/5"
+                        : "border-gray-200 dark:border-gray-700"
+                    }`}
+                    data-testid={`category-${option.value}`}
+                  >
+                    <div className="font-semibold">{option.label}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      {option.description}
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {organizationCategory === "entrepreneur" && (
+                <div className="mt-6 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
+                  <h3 className="font-semibold mb-3">
+                    What type of entrepreneur are you?
+                  </h3>
+                  <div className="grid gap-3">
+                    {[
+                      {
+                        value: "sole",
+                        label: "Solo Entrepreneur (0-1 employees)",
+                        description: "Just you or you plus one person",
+                      },
+                      {
+                        value: "micro",
+                        label: "Micro Startup (2-10 employees)",
+                        description: "Small team startup",
+                      },
+                      {
+                        value: "growing",
+                        label: "Growing Venture (11-25 employees)",
+                        description: "Scaling business",
+                      },
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          setEntrepreneurSubcategory(
+                            option.value as EntrepreneurSubcategory,
+                          );
+                          setPhase("assessment");
+                        }}
+                        className={`p-3 border rounded-lg text-left transition-all hover:border-primary ${
+                          entrepreneurSubcategory === option.value
+                            ? "border-primary bg-primary/5"
+                            : "border-gray-200 dark:border-gray-700"
+                        }`}
+                        data-testid={`subcategory-${option.value}`}
+                      >
+                        <div className="font-medium">{option.label}</div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                          {option.description}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (phase === "assessment") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Simple Progress Header */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <span className="text-lg">📊</span>
+              <h1 className="text-xl font-semibold">{category.name}</h1>
+            </div>
+
+            {/* Archetype Oval above Progress Bar */}
+            {(() => {
+              const getCurrentQuestionArchetype = () => {
+                if (currentSection === "forced-choice") return null;
+                const question = currentSectionQuestions[
+                  currentQuestionIndex
+                ] as AssessmentQuestion;
+                return question
+                  ? category?.archetypes.find(
+                      (a) => a.id === question.archetype,
+                    )?.name
+                  : null;
+              };
+
+              const archetypeName = getCurrentQuestionArchetype();
+              return archetypeName ? (
+                <div className="inline-flex items-center justify-center px-6 py-2 mb-4 bg-primary/10 border border-primary/20 rounded-full">
+                  <span className="text-sm font-medium text-primary">
+                    {archetypeName}
+                  </span>
+                </div>
+              ) : null;
+            })()}
+
+            <Progress value={progress} className="w-full max-w-md mx-auto" />
+          </div>
+
+          {/* Current Question */}
+          {renderCurrentQuestion()}
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}In this assessment template can you change the starting category questions for the middle management assessment ..For middle management we are not going to change the result based on the size but we will collect the data for future enhancements.   At the start of the paid assessment for middle level management ask the following questions. 
+Demographic Questions (Middle Management Assessment)
+1. Company Size
+Which best describes the size of your company?
+•	1–25 employees
+•	26–50 employees
+•	51–100 employees
+•	101–250 employees
+•	251–500 employees
+•	500+ employees
+2. Industry
+Which industry do you primarily work in?
+•	Construction / Contracting
+•	Manufacturing
+•	Professional Services
+•	Healthcare
+•	Technology
+•	Education / Nonprofit
+•	Other (please specify)
+3. Years in a Management Role
+How many years have you been in a management role?
+•	Less than 1 year
+•	1–3 years
+•	4–7 years
+•	8–15 years
+•	15+ years
+4. Current Team Size
+How many people do you directly manage?
+•	1–5
+•	6–10
+•	11–20
+•	21–50
+•	51+
